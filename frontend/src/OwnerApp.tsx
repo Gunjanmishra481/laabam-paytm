@@ -29,7 +29,7 @@ const FlashContext = createContext<{ flash: Flash; setFlash: (f: Flash) => void 
 export const useFlash = () => useContext(FlashContext)
 
 export default function OwnerApp({ root = true }: { root?: boolean }) {
-  const { status, t, retry } = useSession()
+  const { status, t, retry, sandbox } = useSession()
   const [flash, setFlash] = useState<Flash>(null)
 
   let body
@@ -46,7 +46,15 @@ export default function OwnerApp({ root = true }: { root?: boolean }) {
   return (
     <FlashContext.Provider value={{ flash, setFlash }}>
       <VoiceProvider>
-        <div className={root ? 'app app--root' : 'app'}>{body}</div>
+        <div className={root ? 'app app--root' : 'app'}>
+          {sandbox && (
+            // Every sandbox shop (seeded or new) is a test shop: said on every screen, onboarding included
+            <p className="test-notice" role="note" data-testid="test-shop-notice">
+              {t('testShopNotice')}
+            </p>
+          )}
+          {body}
+        </div>
       </VoiceProvider>
     </FlashContext.Provider>
   )

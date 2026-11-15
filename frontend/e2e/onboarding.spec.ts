@@ -1,6 +1,6 @@
 // First run: a new shop goes Welcome -> Setup -> Counter (DESIGN.md §3). The seeded demo shop skips it and
 // is labelled as sample data. Settings (sandbox) resets to either.
-import { expect, test } from '@playwright/test'
+import { expect, test, type Browser } from '@playwright/test'
 
 test('a new shop: Welcome, then Setup, then an empty Counter', async ({ page }) => {
   await page.goto('/?fresh=1')
@@ -93,4 +93,53 @@ test('Settings: what Laabam keeps, a copy of the data, and deleting the shop (ca
   await page.getByTestId('keep-shop').click()
   await expect(page.getByTestId('deletion-due')).toHaveCount(0)
   await expect(page.getByTestId('delete-shop')).toBeVisible()
+})
+
+// Two visitors (separate browser contexts: their own cookies, like two devices) open /demo?fresh=1.
+async function freshDemoVisitor(browser: Browser, name: string, upi: string) {
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  let token = ''
+  page.on('response', async (r) => {
+    if (/\/(sandbox\/session|v1\/auth\/refresh)$/.test(r.url()) && r.ok()) token = (await r.json()).access_token ?? token
+  })
+  await page.goto('/demo?fresh=1')
+  const phone = page.getByLabel("Owner's phone")
+  await expect(phone.getByTestId('welcome')).toBeVisible() // a brand-new shop starts at onboarding
+  await expect(phone.getByTestId('test-shop-notice')).toHaveText('Test shop · synthetic data')
+  await expect(page.locator('.demo-bar')).toContainText('Test shop, synthetic data')
+  await expect(page).toHaveURL(/\/demo$/) // the flag is taken off, so a reload keeps this shop
+  await phone.getByRole('radio', { name: /English/ }).check()
+  await phone.getByRole('button', { name: 'Continue' }).click()
+  await expect(phone.getByTestId('test-shop-notice')).toBeVisible() // on Setup too
+  await phone.getByLabel('Shop name').fill(name)
+  await phone.getByLabel('UPI ID for payments').fill(upi)
+  await phone.getByRole('button', { name: 'Start billing' }).click()
+  await expect(phone.getByRole('heading', { name })).toBeVisible()
+  await expect(phone.getByTestId('test-shop-notice')).toBeVisible() // and on the Counter
+  return { context, page, phone, auth: () => ({ Authorization: `Bearer ${token}` }) }
+}
+
+test('/demo?fresh=1: every visitor gets a new, separate test shop through onboarding', async ({ browser }) => {
+  const a = await freshDemoVisitor(browser, 'Anbu Stores', 'anbu@okaxis')
+  const b = await freshDemoVisitor(browser, 'Bala Stores', 'bala@okaxis')
+
+  const meA = await (await a.page.request.get('/v1/me', { headers: a.auth() })).json()
+  const meB = await (await b.page.request.get('/v1/me', { headers: b.auth() })).json()
+  expect(meA.id).not.toBe(meB.id)
+  expect([meA.name, meB.name]).toEqual(['Anbu Stores', 'Bala Stores'])
+
+  const bill = await (await a.page.request.post('/v1/bills/text', { headers: a.auth(), data: { text: 'rice 200' } })).json()
+  // the other visitor can't see or open it
+  expect((await b.page.request.get(`/v1/bills/${bill.id}`, { headers: b.auth() })).status()).toBe(404)
+  expect(await (await b.page.request.get('/v1/bills', { headers: b.auth() })).json()).toEqual([])
+  await expect(b.phone.getByText('No bills yet today.')).toBeVisible()
+
+  // a reload keeps each visitor in their own shop
+  await a.page.reload()
+  await expect(a.phone.getByRole('heading', { name: 'Anbu Stores' })).toBeVisible()
+  await b.page.reload()
+  await expect(b.phone.getByRole('heading', { name: 'Bala Stores' })).toBeVisible()
+  await a.context.close()
+  await b.context.close()
 })

@@ -25,6 +25,13 @@ a { color: var(--green-700); }
 
 /* the app column: phone-width; centred on mint on bigger screens */
 .app { position: relative; min-height: var(--app-h); display: flex; flex-direction: column; background: var(--bg); }
+/* sandbox: "Test shop · synthetic data", in the empty band above every screen's content */
+.test-notice {
+  position: absolute; z-index: 5; top: calc(14px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+  margin: 0; white-space: nowrap; pointer-events: none;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.4px; line-height: 1;
+  color: var(--amber-text); background: var(--amber-bg); border: 1px solid var(--amber-line); border-radius: 999px; padding: 4px 10px;
+}
 @media (min-width: 600px) {
   body:has(.app--root) { background: var(--mint); }
   .app--root { max-width: 480px; margin: 0 auto; box-shadow: 0 0 0 1px var(--line); }

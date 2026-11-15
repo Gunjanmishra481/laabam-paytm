@@ -41,7 +41,7 @@ export default function Demo() {
       <header className="demo-bar">
         <strong>Laabam demo</strong>
         <span className="muted small">
-          {merchant?.sample_data ? 'Sample data' : 'New shop'} · sandbox payments · no real money
+          Test shop, synthetic data · {merchant?.sample_data ? 'sample month' : 'new shop'} · sandbox payments · no real money
         </span>
         <span className="spacer" />
         <label className="small">
