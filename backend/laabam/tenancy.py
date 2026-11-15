@@ -131,6 +131,12 @@ def rls_sql(tables: tuple[str, ...] = TENANT_TABLES, phone: bool = False) -> lis
               IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{DEFINER_ROLE}') THEN
                 CREATE ROLE {DEFINER_ROLE} NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
               END IF;
+              -- A managed database (RDS) migrates as a non-superuser owner, which may hand functions to the
+              -- definer only as a member of that role (Postgres 16). The definer itself can't log in.
+              IF NOT (SELECT rolsuper FROM pg_roles WHERE rolname = current_user)
+                 AND NOT pg_has_role(current_user, '{DEFINER_ROLE}', 'MEMBER') THEN
+                EXECUTE format('GRANT %I TO %I', '{DEFINER_ROLE}', current_user);
+              END IF;
             END $$""",
         f"GRANT USAGE ON SCHEMA public TO {APP_ROLE}, {DEFINER_ROLE}",
         f"REVOKE CREATE ON SCHEMA public FROM {APP_ROLE}",

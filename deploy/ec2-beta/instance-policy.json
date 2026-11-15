@@ -1,0 +1,8 @@
+{"Version":"2012-10-17","Statement":[
+ {"Sid":"SignAccessTokens","Effect":"Allow","Action":["kms:Sign","kms:GetPublicKey","kms:DescribeKey"],"Resource":"arn:aws:kms:ap-south-1:806121397725:key/d170718f-034b-4aa2-a7fe-d8390bcf200e"},
+ {"Sid":"WrapShopAuditKeys","Effect":"Allow","Action":["kms:GenerateDataKey","kms:Decrypt"],"Resource":"arn:aws:kms:ap-south-1:806121397725:key/f60f5703-6154-4b05-b047-34e086d8fbb9"},
+ {"Sid":"HashPhoneNumbers","Effect":"Allow","Action":"kms:GenerateMac","Resource":"arn:aws:kms:ap-south-1:806121397725:key/f7151453-5d62-4826-8916-66e75b10b558"},
+ {"Sid":"ReadOwnSecrets","Effect":"Allow","Action":"secretsmanager:GetSecretValue","Resource":["arn:aws:secretsmanager:ap-south-1:806121397725:secret:laabam-beta/sarvam-api-key-FE3Bnc","arn:aws:secretsmanager:ap-south-1:806121397725:secret:laabam-beta/db-app-v4pltW"]},
+ {"Sid":"Token","Effect":"Allow","Action":"ecr:GetAuthorizationToken","Resource":"*"},
+ {"Sid":"PullThisRepoOnly","Effect":"Allow","Action":["ecr:BatchGetImage","ecr:GetDownloadUrlForLayer","ecr:BatchCheckLayerAvailability"],
+  "Resource":"arn:aws:ecr:ap-south-1:806121397725:repository/laabam-beta"}]}
