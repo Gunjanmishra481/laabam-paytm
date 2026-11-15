@@ -1,0 +1,21 @@
+{
+  "name": "laabam-infra",
+  "private": true,
+  "description": "AWS CDK for Laabam. S4: only the GitHub OIDC deploy role (not deployed). S5 adds the stacks.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "tsc -p . && node --test \"dist/test/*.test.js\"",
+    "synth": "tsc -p . && cdk synth --app \"node dist/bin/app.js\" --quiet"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.275.0",
+    "cdk-nag": "3.0.2",
+    "constructs": "10.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "aws-cdk": "2.1147.0",
+    "typescript": "7.0.2"
+  }
+}
