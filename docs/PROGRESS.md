@@ -12,6 +12,17 @@ Open question: the e2e suite starts more than 20 demo shops from one IP, so the 
 (LAABAM_DEMO_SHOPS_PER_IP_HOUR, 20) refuses it unless the e2e server raises the limit (local runs use 1000). CI's
 e2e job doesn't set it yet; waiting for the owner's decision.
 
+## Beta on AWS: real sign-up by phone (2026-11-15, not S5)
+
+https://d2qhotuathfbcs.cloudfront.net. `LAABAM_ENV=prod` + `LAABAM_BETA=1` (simulated payments and lender only).
+Firebase Phone Auth (project laabam-beta-34fb9) proves the number; we issue our own KMS-signed session; the number
+is stored only as a KMS HMAC; consent to /privacy recorded. RDS Postgres 16 (encrypted, deletion protection,
+private, TLS verify-full, RLS on 17 tables; 47 RLS/cross-shop tests passed against it). Details and known gaps:
+deploy/ec2-beta/README.md. **Cost: about $35/month (~$1.15/day).**
+**Teardown:** `bash deploy/ec2-beta/teardown.sh` (keeps a final database snapshot).
+Open: backups are 1 day until the AWS plan is upgraded (then set 7); the two-phone test needs real phones
+(reCAPTCHA stops automated browsers, as it should).
+
 ## Judges' demo on AWS (2026-11-15, not S5)
 
 https://d1h4dpjxoavkk8.cloudfront.net (`/demo` for the demo view). CloudFront (HTTPS) -> one EC2 t3.small running the
