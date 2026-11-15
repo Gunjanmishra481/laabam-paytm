@@ -242,10 +242,11 @@ def test_choose_vision(db_url, tmp_path):
     assert svc.purchases.vision.name == "offline" and svc.purchases.mode == "samples"
     v = choose_vision(Settings(**base, sarvam_api_key=KEY), svc.adapters)
     assert isinstance(v, SarvamVision)
+    assert Settings(**base).vision_fallback == "none"  # no fallback unless asked for
     v = choose_vision(Settings(**base, sarvam_api_key=KEY, gemini_api_key="g"), svc.adapters)
+    assert isinstance(v, SarvamVision)  # a Gemini key alone doesn't turn the fallback on
+    v = choose_vision(Settings(**base, sarvam_api_key=KEY, gemini_api_key="g", vision_fallback="gemini"), svc.adapters)
     assert isinstance(v, VisionChain) and v.fallback.name == "gemini" and v.accepts == SarvamVision.accepts
-    v = choose_vision(Settings(**base, sarvam_api_key=KEY, gemini_api_key="g", vision_fallback="none"), svc.adapters)
-    assert isinstance(v, SarvamVision)
     v = choose_vision(Settings(**base, vision="gemini", sarvam_api_key=KEY, gemini_api_key="g"), svc.adapters)
     assert v.name == "gemini" and not isinstance(v, VisionChain)  # fallback is gemini itself: none
     assert choose_vision(Settings(**base, vision="offline", sarvam_api_key=KEY), svc.adapters).name == "offline"
@@ -378,7 +379,7 @@ def test_falls_back_to_gemini(db_url, tmp_path):
         return gem(request) if "googleapis" in request.url.host else fake(request)
 
     cfg = Settings(database_url=db_url, sandbox=True, inline_worker=False, sarvam_api_key=KEY,
-                   gemini_api_key="gkey-123", photo_dir=str(tmp_path))
+                   gemini_api_key="gkey-123", vision_fallback="gemini", photo_dir=str(tmp_path))
     svc = build_services(cfg, http_client=httpx.Client(transport=httpx.MockTransport(route)))
     with TestClient(create_app(svc)) as client:
         h = login(client)
@@ -432,3 +433,13 @@ def test_compare_script_scores_against_the_photos():
     dal = r["lines"][0]
     assert dal["wrong"] == ["amount"] and dal["flags"] == ["math"] and dal["caught"]
     assert r["total_mismatch_flagged"]
+
+
+
+def test_google_is_not_reachable_unless_gemini_is_configured():
+    """The outbound allowlist has Google's host only when Gemini is the reader or the fallback."""
+    from laabam.app import outbound_hosts
+    google = "generativelanguage.googleapis.com"
+    assert google not in outbound_hosts(Settings(gemini_api_key="g"))  # a key alone isn't enough
+    assert "api.sarvam.ai" in outbound_hosts(Settings())
+    assert google in outbound_hosts(Settings(vision_fallback="gemini"))

@@ -252,6 +252,7 @@ def test_partner_assertion_refusals(client, partner, bad):
     (dict(env="demo", sandbox=True, token_signer="kms", token_kms_key_id="k", cors_origins="*"), "CORS"),
     (dict(env="prod", sandbox=False, lending="x", token_signer="kms", token_kms_key_id="k"), "JWKS"),
     (dict(env="staging"), "LAABAM_ENV"),
+    (dict(env="prod", sandbox=False, vision="gemini"), "LAABAM_VISION=gemini"),
 ])
 def test_unsafe_configs_refuse_to_start(cfg, problem):
     with pytest.raises(UnsafeConfig, match=problem):

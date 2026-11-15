@@ -1,6 +1,6 @@
 """Read the sample bill photos with each live reader and score them against what the photos actually say.
 
-    cd backend && LAABAM_SARVAM_API_KEY=... LAABAM_GEMINI_API_KEY=... python -m scripts.compare_vision
+    cd backend && LAABAM_SARVAM_API_KEY=... python -m scripts.compare_vision
     python -m scripts.compare_vision --providers sarvam --bills handwritten tamil --json out.json
 
 Calls live services (costs a few pages of credit); tests never run it. Each reading goes through the same code
@@ -100,7 +100,7 @@ def score(truth: dict, reading) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--providers", nargs="+", default=["sarvam", "gemini"])
+    ap.add_argument("--providers", nargs="+", default=["sarvam"])  # gemini is off (see config); pass it to compare
     ap.add_argument("--bills", nargs="+", default=None)
     ap.add_argument("--json", type=Path, default=None)
     args = ap.parse_args()

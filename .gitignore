@@ -11,3 +11,4 @@ __pycache__/
 .env
 backend/var/
 *.log
+dist-e2e/

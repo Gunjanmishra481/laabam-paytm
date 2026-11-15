@@ -53,9 +53,8 @@ over HTTPS, e.g. a tunnel (`cloudflared tunnel --url http://localhost:8000`) or 
 Distributor bills ("Bills in" on the counter): photograph a bill, check the lines, confirm, and the
 costs are saved per item (per kg / L / pc, from the pack size). With no vision service set up, the demo
 offers three sample bills (printed, handwritten, and one with a misread amount the line check catches).
-For live reading with Gemini, add `LAABAM_VISION=gemini LAABAM_GEMINI_API_KEY=...` (key from
-https://aistudio.google.com/apikey; model `LAABAM_GEMINI_MODEL`, default gemini-3.8-flash). Photos are
-kept on local disk under `backend/var/photos` in development.
+For live reading, set `LAABAM_SARVAM_API_KEY` in `backend/.env` (Sarvam Document AI reads the photo on the
+worker; the same key as speech). Photos are kept on local disk under `backend/var/photos` in development.
 
 End-to-end tests (counter flow, push-to-talk and bills in) against that running API: `cd frontend && npx playwright test`.
 

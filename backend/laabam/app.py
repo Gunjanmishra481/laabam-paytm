@@ -225,11 +225,17 @@ def choose_vision(cfg: Settings, adapters: AdapterRegistry):
     return primary
 
 
+def outbound_hosts(cfg: Settings) -> set[str]:
+    """The only hosts the app calls. Google's is in only when Gemini is configured (it is off by default)."""
+    gemini_used = "gemini" in (cfg.vision, cfg.vision_fallback)
+    return hosts_from(cfg.sarvam_base_url, cfg.gemini_base_url if gemini_used else "", cfg.paytm_base_url,
+                      cfg.partner_jwks_url)
+
+
 def build_services(cfg: Settings, schema: bool = True, http_client=None) -> Services:
     validate(cfg)  # refuses unsafe configurations (e.g. the sandbox in prod) before anything starts
     # every partner call goes through one client: allowlisted https hosts, timeouts, a circuit breaker per host
-    http_client = guarded_client(hosts_from(cfg.sarvam_base_url, cfg.gemini_base_url, cfg.paytm_base_url,
-                                            cfg.partner_jwks_url), inner=http_client)
+    http_client = guarded_client(outbound_hosts(cfg), inner=http_client)
     engine = make_engine(cfg.database_url)
     if schema:
         create_schema(engine)  # no-op on tables that exist; production runs Alembic first

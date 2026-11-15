@@ -36,8 +36,9 @@ class Settings:
     speech: str = field(default_factory=lambda: _env("LAABAM_SPEECH", "offline"))
     # Bill photos: sarvam (Document AI) | gemini | offline. A provider with no API key falls back to offline.
     vision: str = field(default_factory=lambda: _env("LAABAM_VISION", "sarvam"))
-    # Tried when the chosen reader fails or reads nothing, if its key is set. "" or "none" for no fallback.
-    vision_fallback: str = field(default_factory=lambda: _env("LAABAM_VISION_FALLBACK", "gemini"))
+    # A second reader, tried when the chosen one fails or reads nothing. Off by default ("none"); the only one
+    # available is "gemini" (needs LAABAM_GEMINI_API_KEY; sends photos outside India, so prod refuses it).
+    vision_fallback: str = field(default_factory=lambda: _env("LAABAM_VISION_FALLBACK", "none"))
     vision_timeout_seconds: float = field(default_factory=lambda: float(_env("LAABAM_VISION_TIMEOUT_SECONDS", "90")))
     vision_poll_seconds: float = field(default_factory=lambda: float(_env("LAABAM_VISION_POLL_SECONDS", "2")))
     # Sarvam (speech and Document AI share the key). Model names change; check https://docs.sarvam.ai.
@@ -144,6 +145,8 @@ def validate(cfg: Settings) -> None:
             problems.append("prod needs a real lending adapter (LAABAM_LENDING)")
         if cfg.vision_fallback not in ("", "none"):
             problems.append("the vision fallback sends bill photos outside India: not allowed in prod")
+        if cfg.vision == "gemini":
+            problems.append("LAABAM_VISION=gemini sends bill photos outside India: not allowed in prod")
         if not cfg.partner_jwks_url.startswith("https://"):
             problems.append("prod needs the partner's JWKS URL (https)")
     if cfg.env in ("demo", "prod"):

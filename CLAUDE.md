@@ -50,14 +50,14 @@ Speech: `LAABAM_SPEECH=sarvam` + `LAABAM_SARVAM_API_KEY` (models: `LAABAM_SARVAM
 saaras:v4; `LAABAM_SARVAM_TTS_MODEL`, default bulbul:v3). Offline speech answers only the sample clips in
 `laabam/speech_samples.yaml` (tests send `X-Laabam-Clip`); the sandbox demo plays them in turn.
 
-Vision (bill photos): `LAABAM_VISION=sarvam` (default) | `gemini` | `offline`. Sarvam uses Document AI Extract
+Vision (bill photos): `LAABAM_VISION=sarvam` (default) | `offline`. Sarvam uses Document AI Extract
 (`/doc-ai/v1/job/extract`, then poll status, then fetch results) with the speech key `LAABAM_SARVAM_API_KEY`;
 JPEG/PNG go as they are, WebP/HEIC are converted. A live read runs on the worker (timer `purchase_read`): the bill is
-"reading", then "read", or "failed" with Try again. `LAABAM_VISION_FALLBACK=gemini` (default; used only if
-`LAABAM_GEMINI_API_KEY` is set) reads when Sarvam fails. A chosen reader without its key drops to offline with a
-warning. Offline vision answers only the sample bills in `laabam/bill_samples.yaml` (tests send `X-Laabam-Sample`);
+"reading", then "read", or "failed" with Try again. No fallback reader: `LAABAM_VISION_FALLBACK` defaults to
+`none` (a Gemini adapter exists in the code but is off; prod refuses it, and the UI never names a provider). A chosen
+reader without its key drops to offline with a warning. Offline vision answers only the sample bills in `laabam/bill_samples.yaml` (tests send `X-Laabam-Sample`);
 their pictures are `frontend/public/samples/bills/*.svg`. Live comparison on photo renders of them:
-`cd backend && python -m scripts.compare_vision` (needs keys, spends credit; truth in `tests/data/bills/truth.yaml`).
+`cd backend && python -m scripts.compare_vision --providers sarvam` (needs the key, spends credit; truth in `tests/data/bills/truth.yaml`).
 
 Phone demo on the Wi-Fi (https, so the mic works): `cd backend && python -m scripts.serve_lan` prints the address;
 it loads backend/.env and keeps its self-signed certificate in backend/var/lan-tls/ (git-ignored).
