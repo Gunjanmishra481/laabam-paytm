@@ -1,0 +1,47 @@
+{
+ "Version": "2012-10-17",
+ "Statement": [
+  {
+   "Sid": "SignAccessTokens",
+   "Effect": "Allow",
+   "Action": [
+    "kms:Sign",
+    "kms:GetPublicKey",
+    "kms:DescribeKey"
+   ],
+   "Resource": "arn:aws:kms:ap-south-1:806121397725:key/f1455806-4ce1-4189-a3ac-372a1458665a"
+  },
+  {
+   "Sid": "WrapShopAuditKeys",
+   "Effect": "Allow",
+   "Action": [
+    "kms:GenerateDataKey",
+    "kms:Decrypt"
+   ],
+   "Resource": "arn:aws:kms:ap-south-1:806121397725:key/6a250b0b-6ae2-49d8-82c8-831e31c9f090"
+  },
+  {
+   "Sid": "ReadSarvamKey",
+   "Effect": "Allow",
+   "Action": "secretsmanager:GetSecretValue",
+   "Resource": "arn:aws:secretsmanager:ap-south-1:806121397725:secret:laabam-demo/sarvam-api-key-Hi0ZqM"
+  },
+  {
+   "Sid": "Token",
+   "Effect": "Allow",
+   "Action": "ecr:GetAuthorizationToken",
+   "Resource": "*"
+  },
+  {
+   "Sid": "PullThisRepoOnly",
+   "Effect": "Allow",
+   "Action": [
+    "ecr:BatchGetImage",
+    "ecr:GetDownloadUrlForLayer",
+    "ecr:BatchCheckLayerAvailability",
+    "ecr:DescribeImages"
+   ],
+   "Resource": "arn:aws:ecr:ap-south-1:806121397725:repository/laabam-demo"
+  }
+ ]
+}

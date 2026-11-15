@@ -12,6 +12,16 @@ Open question: the e2e suite starts more than 20 demo shops from one IP, so the 
 (LAABAM_DEMO_SHOPS_PER_IP_HOUR, 20) refuses it unless the e2e server raises the limit (local runs use 1000). CI's
 e2e job doesn't set it yet; waiting for the owner's decision.
 
+## Judges' demo on AWS (2026-11-15, not S5)
+
+https://d1h4dpjxoavkk8.cloudfront.net (`/demo` for the demo view). CloudFront (HTTPS) -> one EC2 t3.small running the
+hardened image from ECR in demo mode (sandbox, rate limits, 20 demo shops an hour per IP, no vision fallback), tokens
+and audit keys in KMS, Sarvam key in Secrets Manager, one least-privilege instance role, origin open to CloudFront
+only. Details: deploy/ec2-demo/README.md. App change for it: laabam-demo may use a local SQLite file (config check).
+**Cost: about $0.77 a day** (~$23 a month, over the $10 budget in ~13 days).
+**Teardown:** `bash deploy/ec2-demo/teardown.sh` (removes only what the deploy created; KMS keys scheduled for
+deletion after 7 days).
+
 ## Security hardening and AWS (docs/SECURITY_PLAN.md)
 
 - [x] S0 threat model and baseline: `docs/security/THREAT_MODEL.md` (assets, trust boundaries, STRIDE per flow,

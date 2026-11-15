@@ -248,7 +248,7 @@ def test_partner_assertion_refusals(client, partner, bad):
     (dict(env="demo", sandbox=True, token_signer="local"), "KMS"),
     (dict(env="demo", sandbox=True, token_signer="kms", token_kms_key_id="k"), "audit keys"),
     (dict(env="prod", sandbox=False, database_url="postgresql+psycopg://u:p@h/db?sslmode=require"), "verify-full"),
-    (dict(env="demo", sandbox=True, database_url="sqlite:///x.db"), "verify-full"),
+    (dict(env="prod", sandbox=False, database_url="sqlite:///x.db"), "verify-full"),  # prod: never SQLite
     (dict(env="demo", sandbox=True, token_signer="kms", token_kms_key_id="k", cors_origins="*"), "CORS"),
     (dict(env="prod", sandbox=False, lending="x", token_signer="kms", token_kms_key_id="k"), "JWKS"),
     (dict(env="staging"), "LAABAM_ENV"),
@@ -270,6 +270,17 @@ def test_database_url_from_parts_verifies_the_server(monkeypatch):
     url = _database_url()
     assert "sslmode=verify-full" in url and "sslrootcert=/etc/ssl/rds/global-bundle.pem" in url
     assert "p%40ss%2Fword" in url
+
+
+def test_demo_may_use_a_local_sqlite_file_but_keeps_every_other_control():
+    """laabam-demo (synthetic data) can run on a SQLite file in the container; KMS, CORS and sandbox rules stay."""
+    ok = dict(env="demo", sandbox=True, token_signer="kms", token_kms_key_id="k", audit_kms_key_id="a",
+              database_url="sqlite:////tmp/laabam.db", owner_database_url="", vision_fallback="none")
+    validate(Settings(**ok))
+    with pytest.raises(UnsafeConfig, match="KMS"):
+        validate(Settings(**{**ok, "token_signer": "local"}))
+    with pytest.raises(UnsafeConfig, match="verify-full"):  # a network Postgres still needs verified TLS
+        validate(Settings(**{**ok, "database_url": "postgresql+psycopg://u:p@h/db?sslmode=require"}))
 
 
 def test_prod_config_refuses_to_start_with_the_sandbox(db_url):

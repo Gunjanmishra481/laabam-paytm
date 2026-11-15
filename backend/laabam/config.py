@@ -153,7 +153,11 @@ def validate(cfg: Settings) -> None:
         if cfg.token_signer != "kms" or not cfg.token_kms_key_id:
             problems.append("deployed stacks sign tokens with KMS (LAABAM_TOKEN_SIGNER=kms, LAABAM_TOKEN_KMS_KEY_ID)")
         url = cfg.database_url
-        if not url.startswith("postgresql") or "sslmode=verify-full" not in url or "sslrootcert=" not in url:
+        # laabam-demo may keep its synthetic data in a local SQLite file inside the container: it never crosses a
+        # network, so there is no TLS to verify. prod always needs Postgres over verified TLS.
+        local_demo_file = cfg.env == "demo" and url.startswith("sqlite:///") and not url.startswith("sqlite:////:")
+        if not local_demo_file and (not url.startswith("postgresql") or "sslmode=verify-full" not in url
+                                    or "sslrootcert=" not in url):
             problems.append("deployed stacks use Postgres with TLS verify-full and the RDS CA (sslmode=verify-full)")
         if not cfg.audit_kms_key_id:
             problems.append("deployed stacks wrap the shops' audit keys with KMS (LAABAM_AUDIT_KMS_KEY_ID)")
