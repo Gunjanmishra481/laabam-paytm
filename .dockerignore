@@ -8,3 +8,14 @@
 **/.pytest_cache
 **/*.db
 infra
+**/.env
+**/.env.*
+**/*.log
+**/var
+**/dist-e2e
+**/test-results
+**/playwright-report
+backend/tests
+backend/scripts
+design
+docs
