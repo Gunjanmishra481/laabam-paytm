@@ -54,3 +54,16 @@ Deletes exactly what this deploy created: the CloudFront distribution (disabled 
 5-15 minutes), the instance and its volume, the security group, the instance role and profile, the secret (no
 recovery window), the ECR repository and images, and the two KMS key aliases; the two keys are disabled and
 scheduled for deletion after 7 days (the minimum KMS allows).
+
+## Checked live (2026-11-15, 13:04 IST), BUILD_PLAN §10 path
+
+1. Voice "rice 200, sugar 100, oil 165" (Sarvam): Rice ₹200, Sugar ₹100, Oil ₹165 = ₹465 → Confirm → QR → sandbox
+   pay → "₹465 received", announced on the Soundbox.
+2. Second order: say **"rice, sunflower oil"** with a clear pause → Rice ₹120 and Sunflower oil ₹165, both learned.
+   A bare "oil" asks for a price in the seeded shop (it has several oils), and "rice oil" without a pause is one item.
+3. Photo of the Sri Balaji bill (read live by Sarvam Document AI): 4 lines, "Sunflower oil 72 × ₹156, up ₹8" →
+   Confirm → about 3 s later the alert "Sunflower oil costs ₹8 more a litre … ₹156, up from ₹148".
+4. Ask "Why is profit down this week?" → "Mostly Sunflower oil: it made ₹68 less than last week", with sources.
+5. Evening summary played on the Soundbox (figures from code).
+6. Deepavali plan → order about ₹40,000, ₹15,000 in hand → loan offer for the shortfall → Approve.
+   (The exact figures move a little with that day's sales: ₹39,908 / ₹24,908 after the step 1 bill.)
