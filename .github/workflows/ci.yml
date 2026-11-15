@@ -125,3 +125,39 @@ jobs:
         working-directory: frontend
       - if: failure()
         run: cat backend/api.log
+
+  image:
+    runs-on: ubuntu-latest
+    env:
+      # Trivy by image digest (0.69.3); not the trivy-action, so no third-party action code runs here
+      TRIVY: aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Build the image
+        run: docker build -t laabam:ci .
+      - name: Smoke test (read-only root, no capabilities, non-root)
+        run: |
+          docker run -d --name smoke -p 8000:8000 --read-only --tmpfs /tmp --cap-drop ALL \
+            --security-opt no-new-privileges -e LAABAM_ENV=dev -e LAABAM_SANDBOX=1 \
+            -e LAABAM_DATABASE_URL=sqlite:////tmp/laabam.db -e LAABAM_PHOTO_DIR=/tmp/photos laabam:ci
+          for i in $(seq 1 30); do curl -sf localhost:8000/api/health && break; sleep 1; done
+          test "$(docker exec smoke id -u)" = "10001"
+          if curl -sI localhost:8000/api/health | grep -qi '^server:'; then echo 'Server header sent'; exit 1; fi
+          docker rm -f smoke
+      - name: Trivy - fixable HIGH/CRITICAL vulnerabilities in the image fail the build
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY" image --quiet
+          --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 laabam:ci
+      - name: Trivy - Dockerfile misconfigurations
+        run: docker run --rm -v "$PWD:/src:ro" "$TRIVY" config --quiet --severity HIGH,CRITICAL --exit-code 1 /src/Dockerfile
+      - name: SBOM (CycloneDX) of the image
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" "$TRIVY" image --quiet
+          --format cyclonedx --output /out/sbom.cdx.json laabam:ci
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          retention-days: 90

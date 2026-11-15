@@ -40,6 +40,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 ADD --chmod=444 --checksum=sha256:90a6f1a7978a1b1b096dca6c57511ca48d3b8cf052f8e704baf358f34ea2f21b \
     https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
 
+# Debian security fixes newer than the pinned base (Trivy fails the build on fixable HIGH/CRITICAL)
+RUN apt-get update \
+ && apt-get upgrade -y --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/*
 RUN chmod 755 /etc/ssl/rds \
  && groupadd --system --gid 10001 laabam \
  && useradd --system --uid 10001 --gid laabam --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin laabam
