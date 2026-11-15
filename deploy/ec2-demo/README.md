@@ -67,3 +67,15 @@ scheduled for deletion after 7 days (the minimum KMS allows).
 5. Evening summary played on the Soundbox (figures from code).
 6. Deepavali plan → order about ₹40,000, ₹15,000 in hand → loan offer for the shortfall → Approve.
    (The exact figures move a little with that day's sales: ₹39,908 / ₹24,908 after the step 1 bill.)
+
+## Each visitor gets their own test shop (2026-11-15, 13:41 IST)
+
+`/demo?fresh=1` (or `/?fresh=1` on a phone) starts a brand-new shop for that browser and runs the full onboarding
+(language, shop name, UPI ID). Every sandbox shop shows "Test shop · synthetic data" on every screen and in the
+`/demo` header. Shops are separate: checked live with a phone and a laptop (separate browsers): two shop ids, a bill
+in one is invisible to the other (`/v1/bills` empty, opening it by id gives 404), and a reload keeps each browser in
+its own shop. No sign-up and no phone numbers: the shop lives with the browser's sign-in cookie. New demo shops are
+limited to 20 an hour per visitor IP (the IP CloudFront appends) and deleted after 24 hours.
+
+Updating the app: build and push a new image tag, launch a new instance with `user-data.sh` (ids filled in), point
+the CloudFront origin at it, then terminate the old instance and update `IID` in `teardown.sh`.
