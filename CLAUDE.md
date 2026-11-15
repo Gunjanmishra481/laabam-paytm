@@ -6,6 +6,9 @@ Profit per item, price-creep alerts, restock plans, loan offers, and an evening 
 Soundbox in the owner's language. Paytm Build for India AI Hackathon, Track 1 (Merchant Growth AI),
 and a real product Paytm plugs in. One project; the demo runs on sandbox adapters.
 
+Repo: github.com/Gunjanmishra481/laabam-paytm (the hackathon submission; started 2026-11-15 from the tracked files of
+Gunjanmishra481/laabam at 48aefca, which is kept as it was). Work only here, in small commits.
+
 **Read `BUILD_PLAN.md` first.** Work phase by phase, commit after each, stop at every Checkpoint.
 
 ## Rules the code relies on
@@ -39,6 +42,9 @@ Postgres tests: `docker compose up -d db`; conftest's default URL
 on SQLite and Postgres. `LAABAM_REQUIRE_PG=1` fails the run if Postgres is missing (CI sets it).
 On this Windows machine the docker CLI isn't on Git Bash's PATH:
 `export PATH="/c/Users/manas/AppData/Local/Programs/DockerDesktop/resources/bin:$PATH"`.
+
+Keys live in `backend/.env` (git-ignored, never committed). The app reads only environment variables, so load the file
+into the shell before starting: `cd backend && set -a && . ./.env && set +a && python -m uvicorn laabam.app:app --port 8000`.
 
 Speech: `LAABAM_SPEECH=sarvam` + `LAABAM_SARVAM_API_KEY` (models: `LAABAM_SARVAM_STT_MODEL`, default
 saaras:v4; `LAABAM_SARVAM_TTS_MODEL`, default bulbul:v3). Offline speech answers only the sample clips in

@@ -2,6 +2,16 @@
 
 Updated with every commit. The current plan is docs/SECURITY_PLAN.md (phases S0-S6); the product plan is BUILD_PLAN.md.
 
+## Repository (2026-11-15)
+
+Moved to github.com/Gunjanmishra481/laabam-paytm for the hackathon submission: one "Initial commit" made from the
+tracked files of Gunjanmishra481/laabam at 48aefca (that repo is kept unchanged). gitleaks finds no leaks; the four
+fake test values it flags are listed in `.gitleaksignore`. In the new folder, from a clean install: 531 backend tests
+pass, lint and builds are clean, and the e2e suite passes 27/27.
+Open question: the e2e suite starts more than 20 demo shops from one IP, so the C1 limit
+(LAABAM_DEMO_SHOPS_PER_IP_HOUR, 20) refuses it unless the e2e server raises the limit (local runs use 1000). CI's
+e2e job doesn't set it yet; waiting for the owner's decision.
+
 ## Security hardening and AWS (docs/SECURITY_PLAN.md)
 
 - [x] S0 threat model and baseline: `docs/security/THREAT_MODEL.md` (assets, trust boundaries, STRIDE per flow,
