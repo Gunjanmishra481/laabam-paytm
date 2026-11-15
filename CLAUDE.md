@@ -59,6 +59,9 @@ warning. Offline vision answers only the sample bills in `laabam/bill_samples.ya
 their pictures are `frontend/public/samples/bills/*.svg`. Live comparison on photo renders of them:
 `cd backend && python -m scripts.compare_vision` (needs keys, spends credit; truth in `tests/data/bills/truth.yaml`).
 
+Phone demo on the Wi-Fi (https, so the mic works): `cd backend && python -m scripts.serve_lan` prints the address;
+it loads backend/.env and keeps its self-signed certificate in backend/var/lan-tls/ (git-ignored).
+
 E2E (counter flow, push-to-talk with Chromium's fake mic, bills in): `npm run build`, start the API with `LAABAM_SANDBOX=1` (it serves `frontend/dist`),
 then `cd frontend && npx playwright test`. Demo view: http://localhost:8000/demo
 
