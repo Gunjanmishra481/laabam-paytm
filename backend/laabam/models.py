@@ -127,6 +127,7 @@ class Merchant(Base):
     """One shop."""
 
     __tablename__ = "merchants"
+    __table_args__ = (UniqueConstraint("phone_hash", name="uq_merchants_phone_hash"),)
 
     id: Mapped[str] = mapped_column(String(32), primary_key=True)
     name: Mapped[str] = mapped_column(String(120))
@@ -143,6 +144,11 @@ class Merchant(Base):
     # The festival the plan is for: the owner's date (a setting), else the next date in festivals.yaml.
     festival_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     keep_recordings: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    # Beta sign-up: the owner's phone number as an HMAC (phonehash.py), never the number; and their consent to the
+    # privacy notice (which version, when).
+    phone_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    consent_version: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    consent_at: Mapped[datetime | None] = mapped_column(TZDateTime(), nullable=True)
     # The owner asked to delete the shop: it is deleted at this time unless they cancel first.
     deletion_due_at: Mapped[datetime | None] = mapped_column(TZDateTime(), nullable=True)
     # Which adapter serves this shop: "sandbox" for demos, "paytm" (payments, soundbox) in production.
@@ -421,7 +427,7 @@ class DeviceSession(Base):
     id: Mapped[str] = mapped_column(String(32), primary_key=True)
     merchant_id: Mapped[str] = mapped_column(ForeignKey("merchants.id"), index=True)
     label: Mapped[str] = mapped_column(String(80), default="")  # "Chrome on Android", from the user agent
-    via: Mapped[str] = mapped_column(String(16), default="partner")  # partner | sandbox
+    via: Mapped[str] = mapped_column(String(16), default="partner")  # partner | sandbox | phone
     created_at: Mapped[datetime] = mapped_column(TZDateTime(), default=utcnow)
     last_seen_at: Mapped[datetime] = mapped_column(TZDateTime(), default=utcnow)
     expires_at: Mapped[datetime] = mapped_column(TZDateTime())  # absolute limit; sign in again after it

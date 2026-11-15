@@ -581,3 +581,17 @@ button.okrow { cursor: pointer; }
 .loan__actions { display: flex; gap: 10px; }
 .loan__btn { width: auto; flex: 1; min-height: 56px; }
 .loan__btn--go { flex: 2; }
+
+/* ---------------- beta: phone sign-in, privacy notice ---------------- */
+.signin { gap: 18px; }
+.signin__langs { display: flex; gap: 8px; flex-wrap: wrap; }
+.signin__langs [aria-checked="true"] { border-color: var(--green-700); color: var(--green-700); font-weight: 700; }
+.signin__phone { display: flex; align-items: center; gap: 8px; }
+.signin__phone .setup__input { flex: 1; min-width: 0; }
+.signin__cc { font-weight: 700; font-size: 17px; color: var(--muted); }
+.signin__consent { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.45; }
+.signin__consent input { width: 22px; height: 22px; margin-top: 1px; accent-color: var(--green-700); flex: none; }
+.inline-link { color: var(--green-700); font-weight: 700; text-decoration: underline; }
+.privacy__section { padding: 14px 16px; gap: 6px; }
+.privacy__h { font-size: 16px; font-weight: 700; margin: 0; }
+.privacy__p { margin: 0; font-size: 15px; line-height: 1.5; }

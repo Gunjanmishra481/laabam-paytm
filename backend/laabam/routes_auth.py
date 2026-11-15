@@ -1,6 +1,8 @@
 """Sign-in, refresh, sign-out and device sessions (security plan §1), and the owner dependency every /v1 route uses.
 
 - POST /v1/auth/partner   {assertion}: a partner-signed assertion (docs/partner-identity.md) -> a device session
+- POST /v1/auth/phone/start {phone}: before the phone asks Firebase for an OTP; rate limits per IP and per number
+- POST /v1/auth/firebase  {id_token, consent}: a Firebase phone ID token -> our own device session (beta sign-up)
 - POST /v1/auth/refresh   cookie __Host-laabam_refresh + header X-Laabam-Refresh: 1 -> new access token, rotated cookie
 - POST /v1/auth/logout    ends this device's session
 - GET  /v1/sessions, DELETE /v1/sessions/{id}: the shop's signed-in devices, and signing one out
@@ -12,13 +14,15 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
-from . import merchants, tenancy
+from . import audit, merchants, tenancy
 from .auth import COOKIE, Issued, SessionEnded, device_label
 from .db import after_commit
+from .firebase_identity import FirebaseTokenError
 from .ids import new_id
-from .models import Merchant
+from .models import Merchant, utcnow
 from .partner_identity import AssertionError_, PartnerClaims
 from .payments import shop_of
+from .phonehash import BadPhone, normalise
 from .strings import say
 from .tokens import Access, TokenError
 
@@ -26,6 +30,21 @@ from .tokens import Access, TokenError
 class AssertionIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     assertion: str = Field(min_length=20, max_length=4096)
+
+
+PRIVACY_VERSION = "2026-11-15"  # the privacy notice a new owner agrees to (frontend /privacy)
+
+
+class PhoneStartIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    phone: str = Field(min_length=8, max_length=20)
+
+
+class FirebaseIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id_token: str = Field(min_length=20, max_length=4096)
+    consent: bool = False  # ticked "I agree" to the privacy notice; needed to create a shop
+    consent_version: str | None = Field(default=None, max_length=16)
 
 
 def client_ip(request: Request, trusted_proxies: int) -> str:
@@ -118,6 +137,70 @@ def auth_router(svc, owner_access) -> APIRouter:
             shop, text = shop_of(m), say(m.language, "new_device", DEVICE=label)
             after_commit(s, lambda: svc.payments._announce(shop, text, m.language))
         svc.log_auth("signed_in", shop=m.id, via="partner")
+        return out
+
+    @r.post("/auth/phone/start", status_code=204)
+    def phone_start(body: PhoneStartIn, request: Request):
+        """Asked before the phone requests an OTP from Firebase: at most 10 an hour per IP and 5 an hour per number.
+        (Firebase enforces its own limits too: an app can't stop calls made to Firebase directly.)"""
+        if svc.firebase_verifier is None:
+            raise HTTPException(404, "Not found")
+        svc.limiter.take("otp.ip", ("ip", client_ip(request, cfg.trusted_proxies)))
+        try:
+            phone = normalise(body.phone, svc.phone_prefixes)
+        except BadPhone:
+            raise HTTPException(422, "Enter a 10-digit Indian mobile number.") from None
+        svc.limiter.take("otp.number", ("phone", svc.phone_hasher.hash(phone)))
+        return None
+
+    @r.post("/auth/firebase")
+    def firebase_sign_in(body: FirebaseIn, request: Request):
+        """A Firebase phone ID token proves the number; the shop is found by the number's keyed hash, or created
+        (only with consent to the privacy notice). Our own session follows; Firebase's isn't kept."""
+        if svc.firebase_verifier is None:
+            raise HTTPException(404, "Not found")
+        ip = client_ip(request, cfg.trusted_proxies)
+        svc.limiter.take("auth.firebase", ("ip", ip))
+
+        def refused(e: FirebaseTokenError):
+            svc.log_auth("firebase_refused", reason=str(e)[:120])
+            return HTTPException(401, "Couldn't sign you in. Please enter a new code.")
+
+        try:
+            claims = svc.firebase_verifier.check(body.id_token)
+        except FirebaseTokenError as e:
+            raise refused(e) from None
+        phone_hash = svc.phone_hasher.hash(claims.phone)
+        svc.limiter.take("auth.firebase", ("phone", phone_hash))
+        with svc.sessions.begin() as s:
+            try:
+                svc.firebase_verifier.consume(s, claims)
+            except FirebaseTokenError as e:
+                raise refused(e) from None
+            mid = tenancy.shop_for_phone(s, phone_hash)
+            created = mid is None
+            if created:
+                if not body.consent or body.consent_version != PRIVACY_VERSION:
+                    # raising rolls the transaction back, so the token stays unused: tick the box and send it again
+                    raise HTTPException(428, "Please read and agree to the privacy notice first.")
+                mid = new_id("mer")
+                tenancy.set_shop(s, mid)
+                m = merchants.create_merchant(s, "", "en", "", id=mid, language_set=False, phone_hash=phone_hash,
+                                              consent_version=PRIVACY_VERSION, consent_at=utcnow(),
+                                              adapters=cfg.partner_adapters)
+                s.flush()
+                svc.summaries.schedule(s, m)
+                audit.record(s, mid, "owner", "signed_up", mid, via="phone", consent_version=PRIVACY_VERSION)
+            else:
+                tenancy.set_shop(s, mid)
+                m = s.get(Merchant, mid)
+            label = device_label(request.headers.get("user-agent"))
+            issued = svc.auth.start(s, m.id, label, "phone")
+            out = session_response(svc, issued, m, status=201 if created else 200)
+            if not created:  # a new device on an existing shop is announced on its Soundbox (ASVS V2.5.5)
+                shop, text = shop_of(m), say(m.language, "new_device", DEVICE=label)
+                after_commit(s, lambda: svc.payments._announce(shop, text, m.language))
+        svc.log_auth("signed_in", shop=m.id, via="phone", new=created)
         return out
 
     @r.post("/auth/refresh")

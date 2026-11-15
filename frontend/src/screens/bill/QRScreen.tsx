@@ -22,7 +22,7 @@ function useSecondsLeft(expiresAt: string | undefined) {
 }
 
 export default function QRScreen({ bill, onChange }: Props) {
-  const { t } = useSession()
+  const { t, beta } = useSession()
   const { navigate } = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -102,6 +102,13 @@ export default function QRScreen({ bill, onChange }: Props) {
       )}
 
       <div className="actions">
+        {beta && waiting && bill.qr && (
+          // Beta: no real money moves. The owner plays the customer paying, to see the rest of the flow.
+          <Button variant="secondary" size="md" disabled={busy} data-testid="beta-pay"
+            onClick={() => act(async () => (await api.betaPay(bill.qr!.order_id), api.bill(bill.id)))}>
+            {t('betaSimulatePay')}
+          </Button>
+        )}
         {expired && (
           <Button disabled={busy} onClick={() => act(() => api.showQr(bill.id))}>
             {t('showAgainShort')}

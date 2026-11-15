@@ -400,7 +400,16 @@ async function call<T>(
     }
     throw new ApiError(res.status, detail)
   }
+  if (res.status === 204) return null as T
   return (await res.json()) as T
+}
+
+/** GET /api/config: how this deployment signs owners in. Firebase's web settings are public identifiers. */
+export type PublicConfig = {
+  beta: boolean
+  signin: 'sandbox' | 'phone' | 'partner'
+  privacy_version: string
+  firebase?: { apiKey: string; authDomain: string; projectId: string; appId: string }
 }
 
 export type LineEdit = {
@@ -428,6 +437,14 @@ export const api = {
     }),
   me: () => call<Merchant>('GET', '/v1/me'),
   updateMe: (patch: MePatch) => call<Merchant>('PATCH', '/v1/me', patch),
+  config: () => call<PublicConfig>('GET', '/api/config'),
+  /** Beta sign-up: asked before the phone requests a code from Firebase (rate limits per IP and per number). */
+  phoneStart: (phone: string) => call<null>('POST', '/v1/auth/phone/start', { phone }),
+  /** Beta sign-up: the Firebase ID token proves the number; we get our own session back. */
+  phoneSignIn: (idToken: string, consent: boolean, consentVersion: string) =>
+    call<SignedIn>('POST', '/v1/auth/firebase', { id_token: idToken, consent, consent_version: consent ? consentVersion : null }),
+  /** Beta: payments are simulated; plays the customer paying this QR in full. */
+  betaPay: (orderId: string) => call<{ result: string }>('POST', `/v1/beta/qr/${orderId}/pay`),
   deleteShop: (shopName: string) => call<{ deletion_due_at: string }>('DELETE', '/v1/me', { shop_name: shopName }),
   keepShop: () => call<Merchant>('DELETE', '/v1/me/deletion'),
   today: () => call<Today>('GET', '/v1/today'),

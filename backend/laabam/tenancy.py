@@ -86,6 +86,13 @@ def shop_for_paytm_mid(s: Session, mid: str) -> str | None:
     return s.execute(select(Merchant.id).where(Merchant.paytm_mid == mid)).scalars().first()
 
 
+def shop_for_phone(s: Session, phone_hash: str) -> str | None:
+    from .models import Merchant
+    if _pg(s):
+        return s.execute(text("SELECT laabam_shop_for_phone(:h)"), {"h": phone_hash}).scalar()
+    return s.execute(select(Merchant.id).where(Merchant.phone_hash == phone_hash)).scalars().first()
+
+
 def shop_for_refresh(s: Session, token_hash: str) -> str | None:
     from .models import RefreshToken
     if _pg(s):
@@ -113,7 +120,7 @@ def shop_for_bill(s: Session, bill_id: str) -> str | None:
 _SETTING = "current_setting('app.merchant_id', true)"
 
 
-def rls_sql(tables: tuple[str, ...] = TENANT_TABLES) -> list[str]:
+def rls_sql(tables: tuple[str, ...] = TENANT_TABLES, phone: bool = False) -> list[str]:
     """Idempotent DDL, run by the owner role (Alembic, or the test set-up). Role passwords are set by operations
     (Secrets Manager rotation), never here. Migrations pass the tables that exist at their point in history."""
     out = [
@@ -147,7 +154,7 @@ def rls_sql(tables: tuple[str, ...] = TENANT_TABLES) -> list[str]:
         out.append(f"GRANT SELECT, INSERT, UPDATE, DELETE ON {t} TO {APP_ROLE}")
     out += [
         f"GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO {APP_ROLE}",
-        f"GRANT SELECT (id, paytm_mid) ON merchants TO {DEFINER_ROLE}",
+        f"GRANT SELECT (id, paytm_mid{', phone_hash' if phone else ''}) ON merchants TO {DEFINER_ROLE}",
         f"GRANT SELECT (merchant_id, token_hash) ON refresh_tokens TO {DEFINER_ROLE}",
         f"GRANT SELECT (id, merchant_id, qr_order_id) ON sales_bills TO {DEFINER_ROLE}",
     ]
@@ -161,6 +168,9 @@ def rls_sql(tables: tuple[str, ...] = TENANT_TABLES) -> list[str]:
                                                         "WHERE qr_order_id = p_order LIMIT 1"),
         "laabam_shop_for_bill(p_bill text)": ("text", "SELECT merchant_id FROM public.sales_bills WHERE id = p_bill"),
     }
+    if phone:  # from migration 27c69390b45b (beta sign-up by phone) on
+        fns["laabam_shop_for_phone(p_hash text)"] = (
+            "text", "SELECT id FROM public.merchants WHERE phone_hash = p_hash LIMIT 1")
     for sig, (ret, body) in fns.items():
         name = sig.split("(")[0]
         args = sig[sig.index("(") + 1:-1]
@@ -176,5 +186,5 @@ def rls_sql(tables: tuple[str, ...] = TENANT_TABLES) -> list[str]:
 
 
 def install_rls(conn) -> None:
-    for stmt in rls_sql():
+    for stmt in rls_sql(phone=True):
         conn.execute(text(stmt))

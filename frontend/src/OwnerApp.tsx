@@ -20,6 +20,8 @@ import ItemDetail from './screens/ItemDetail'
 import Alerts from './screens/Alerts'
 import Ask from './screens/Ask'
 import Summary from './screens/Summary'
+import PhoneSignIn from './screens/PhoneSignIn'
+import Privacy from './screens/Privacy'
 import Plan, { Reorder } from './screens/Plan'
 import Loan from './screens/Loan'
 
@@ -29,11 +31,14 @@ const FlashContext = createContext<{ flash: Flash; setFlash: (f: Flash) => void 
 export const useFlash = () => useContext(FlashContext)
 
 export default function OwnerApp({ root = true }: { root?: boolean }) {
-  const { status, t, retry, sandbox } = useSession()
+  const { status, t, retry, sandbox, beta, config } = useSession()
+  const { path } = useRouter()
   const [flash, setFlash] = useState<Flash>(null)
 
   let body
-  if (status === 'loading') body = <Screen className="screen--center">{t('connecting')}</Screen>
+  if (path === '/privacy' && status !== 'loading') body = <Privacy /> // readable before signing up
+  else if (status === 'loading') body = <Screen className="screen--center">{t('connecting')}</Screen>
+  else if (status === 'signed_out' && config?.signin === 'phone') body = <PhoneSignIn />
   else if (status === 'offline' || status === 'signed_out')
     body = (
       <Screen className="screen--center">
@@ -51,6 +56,12 @@ export default function OwnerApp({ root = true }: { root?: boolean }) {
             // Every sandbox shop (seeded or new) is a test shop: said on every screen, onboarding included
             <p className="test-notice" role="note" data-testid="test-shop-notice">
               {t('testShopNotice')}
+            </p>
+          )}
+          {beta && (
+            // Real shops, but payments and loan offers are simulated: said on every screen
+            <p className="test-notice" role="note" data-testid="beta-notice">
+              {t('betaNotice')}
             </p>
           )}
           {body}

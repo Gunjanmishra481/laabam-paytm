@@ -53,8 +53,8 @@ class StaticKeys:
 class JwksKeys:
     """The partner's published JWKS, fetched through the outbound allowlist and cached for an hour."""
 
-    def __init__(self, url: str, client, ttl: int = 3600) -> None:
-        self.url, self.client, self.ttl = url, client, ttl
+    def __init__(self, url: str, client, ttl: int = 3600, kty: str = "EC") -> None:
+        self.url, self.client, self.ttl, self.kty = url, client, ttl, kty  # EC P-256 (partner) or RSA (Firebase)
         self._keys: dict = {}
         self._at = 0.0
 
@@ -64,8 +64,12 @@ class JwksKeys:
             r.raise_for_status()
             keys = {}
             for k in r.json().get("keys", []):
-                if k.get("kty") == "EC" and k.get("crv") == "P-256" and k.get("kid"):
+                if not k.get("kid") or k.get("kty") != self.kty:
+                    continue
+                if self.kty == "EC" and k.get("crv") == "P-256":
                     keys[k["kid"]] = jwt.algorithms.ECAlgorithm.from_jwk(json.dumps(k))
+                elif self.kty == "RSA" and k.get("alg", "RS256") == "RS256":
+                    keys[k["kid"]] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(k))
             self._keys, self._at = keys, time.time()
         return self._keys.get(kid)
 

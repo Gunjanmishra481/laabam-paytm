@@ -120,10 +120,28 @@ class Settings:
     # same origin (CloudFront in AWS, the Vite proxy in development).
     cors_origins: str = field(default_factory=lambda: _env("LAABAM_CORS_ORIGINS", ""))
 
+    # Beta (laabam-beta): real owners sign up with their phone number (Firebase Phone Auth proves it; we issue our own
+    # sessions), with payments and loan offers still simulated. Allowed in prod only as this explicit switch, which
+    # permits exactly: simulated QR payments, the sandbox lender, Firebase sign-in instead of the partner's. The demo
+    # sandbox (its /sandbox routes and demo sign-in) stays refused in prod.
+    beta: bool = field(default_factory=lambda: _flag("LAABAM_BETA", False))
+    # Firebase web app settings (public values: they identify the project, they don't grant access).
+    firebase_project_id: str = field(default_factory=lambda: _env("LAABAM_FIREBASE_PROJECT_ID", ""))
+    firebase_api_key: str = field(default_factory=lambda: _env("LAABAM_FIREBASE_API_KEY", ""))
+    firebase_auth_domain: str = field(default_factory=lambda: _env("LAABAM_FIREBASE_AUTH_DOMAIN", ""))
+    firebase_app_id: str = field(default_factory=lambda: _env("LAABAM_FIREBASE_APP_ID", ""))
+    firebase_jwks_url: str = field(default_factory=lambda: _env(
+        "LAABAM_FIREBASE_JWKS_URL",
+        "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"))
+    # Numbers that may sign up (E.164 prefixes, comma-separated). India only.
+    phone_prefixes: str = field(default_factory=lambda: _env("LAABAM_PHONE_PREFIXES", "+91"))
+    # The owner's phone number is stored only as an HMAC under this KMS key (HMAC_256); development uses a local key.
+    phone_hash_kms_key_id: str = field(default_factory=lambda: _env("LAABAM_PHONE_HASH_KMS_KEY_ID", ""))
+
 
 def _partner_adapters(self) -> str:
     """The adapters a new shop gets: the sandbox ones in the demo, Paytm's otherwise."""
-    return "sandbox" if self.sandbox else "paytm"
+    return "sandbox" if self.sandbox or self.beta else "paytm"
 
 
 Settings.partner_adapters = property(_partner_adapters)
@@ -141,13 +159,18 @@ def validate(cfg: Settings) -> None:
     if cfg.env == "prod":
         if cfg.sandbox:
             problems.append("LAABAM_SANDBOX=1 is not allowed in prod")
-        if cfg.lending == "sandbox":
+        if cfg.lending == "sandbox" and not cfg.beta:
             problems.append("prod needs a real lending adapter (LAABAM_LENDING)")
         if cfg.vision_fallback not in ("", "none"):
             problems.append("the vision fallback sends bill photos outside India: not allowed in prod")
         if cfg.vision == "gemini":
             problems.append("LAABAM_VISION=gemini sends bill photos outside India: not allowed in prod")
-        if not cfg.partner_jwks_url.startswith("https://"):
+        if cfg.beta:  # owners sign in with their phone number instead of through the partner
+            if not cfg.firebase_project_id or not cfg.firebase_jwks_url.startswith("https://"):
+                problems.append("the beta needs Firebase (LAABAM_FIREBASE_PROJECT_ID, an https JWKS URL)")
+            if not cfg.phone_hash_kms_key_id:
+                problems.append("the beta hashes phone numbers with KMS (LAABAM_PHONE_HASH_KMS_KEY_ID)")
+        elif not cfg.partner_jwks_url.startswith("https://"):
             problems.append("prod needs the partner's JWKS URL (https)")
     if cfg.env in ("demo", "prod"):
         if cfg.token_signer != "kms" or not cfg.token_kms_key_id:
@@ -167,6 +190,10 @@ def validate(cfg: Settings) -> None:
             problems.append("LAABAM_OWNER_DATABASE_URL is for tests only")
     if cfg.env == "demo" and not cfg.sandbox:
         problems.append("laabam-demo runs with LAABAM_SANDBOX=1")
+    if cfg.beta and cfg.sandbox:
+        problems.append("LAABAM_BETA and LAABAM_SANDBOX are separate modes: set one")
+    if cfg.beta and cfg.env == "demo":
+        problems.append("the beta runs as LAABAM_ENV=prod (or dev), not demo")
     if problems:
         raise UnsafeConfig("; ".join(problems))
 

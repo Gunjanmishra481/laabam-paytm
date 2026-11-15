@@ -3,7 +3,7 @@
 // address bar. In the demo (sandbox), a device with no session starts a demo shop of its own.
 
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
-import { api, refreshSession, setToken, type Merchant, type VoiceMode } from './api'
+import { api, refreshSession, setToken, type Merchant, type PublicConfig, type SignedIn, type VoiceMode } from './api'
 import { t as translate, type Lang } from './strings'
 import { SessionContext, type Session, type SessionStatus } from './useSession'
 
@@ -22,13 +22,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [billSamples, setBillSamples] = useState<string[]>([])
   const [merchant, setMerchant] = useState<Merchant | null>(null)
   const [attempt, setAttempt] = useState(0)
+  const [config, setConfig] = useState<PublicConfig | null>(null)
 
   useEffect(() => {
     let live = true
     ;(async () => {
       try {
-        const h = await api.health()
+        const [h, c] = await Promise.all([api.health(), api.config().catch(() => null)])
         if (!live) return
+        setConfig(c)
         setSandbox(h.sandbox)
         setVoice(h.voice ?? 'off')
         setVision(h.vision ?? 'off')
@@ -72,6 +74,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setMerchant(s.merchant)
   }, [])
 
+  const signedIn = useCallback((s: SignedIn) => {
+    setToken(s.access_token)
+    setMerchant(s.merchant)
+    setStatus('ready')
+  }, [])
+
   const lang: Lang = merchant?.language ?? 'en'
   const value: Session = {
     status,
@@ -88,6 +96,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     },
     resetDemo,
     setMerchant,
+    config,
+    beta: !!config?.beta,
+    signedIn,
   }
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }

@@ -109,7 +109,12 @@ function YourData() {
   return (
     <>
       <div className="settings__card settings__card--privacy" data-testid="privacy-notice">
-        <span className="srow__sub settings__note">{t('privacyWhatWeKeep')}</span>
+        <span className="srow__sub settings__note">
+          {t('privacyWhatWeKeep')} ·{' '}
+          <Link to="/privacy" className="inline-link">
+            {t('privacyNotice')}
+          </Link>
+        </span>
         <ul className="settings__list">
           <li>{t('privacyKeep1')}</li>
           <li>{t('privacyKeep2')}</li>

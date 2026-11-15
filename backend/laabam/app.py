@@ -39,6 +39,7 @@ from .config import Settings, validate
 from .config import settings as default_settings
 from .db import after_commit, create_schema, make_engine, session_factory
 from .demo_seed import seed_demo_month
+from .firebase_identity import FirebaseVerifier
 from .http_guard import RequestGuard
 from .idempotency import IdempotencyConflict
 from .ids import new_id
@@ -46,6 +47,7 @@ from .models import LoanOffer, Merchant, RestockPlan, SalesBill, Timer, utcnow
 from .outbound import guarded_client, hosts_from
 from .partner_identity import JwksKeys, PartnerVerifier, SandboxPartner
 from .payments import PaymentService, QRFailed, shop_of
+from .phonehash import make_hasher
 from .photos import LocalPhotoStore
 from .purchases.service import (
     MAX_PHOTO_BYTES,
@@ -55,7 +57,7 @@ from .purchases.service import (
     VisionUnavailable,
 )
 from .ratelimit import Limit, Limiter, RateLimited
-from .routes_auth import auth_router, client_ip, make_owner, session_response
+from .routes_auth import PRIVACY_VERSION, auth_router, client_ip, make_owner, session_response
 from .shopkeys import ShopKeys, make_keyring
 from .summary import Summaries, latest, summary_json
 from .summary import build as build_summary
@@ -226,10 +228,11 @@ def choose_vision(cfg: Settings, adapters: AdapterRegistry):
 
 
 def outbound_hosts(cfg: Settings) -> set[str]:
-    """The only hosts the app calls. Google's is in only when Gemini is configured (it is off by default)."""
+    """The only hosts the app calls. Google's Gemini host is in only when Gemini is configured (off by default);
+    Google's key server only when Firebase sign-in is (the beta)."""
     gemini_used = "gemini" in (cfg.vision, cfg.vision_fallback)
     return hosts_from(cfg.sarvam_base_url, cfg.gemini_base_url if gemini_used else "", cfg.paytm_base_url,
-                      cfg.partner_jwks_url)
+                      cfg.partner_jwks_url, cfg.firebase_jwks_url if cfg.firebase_project_id else "")
 
 
 def build_services(cfg: Settings, schema: bool = True, http_client=None) -> Services:
@@ -241,7 +244,8 @@ def build_services(cfg: Settings, schema: bool = True, http_client=None) -> Serv
         create_schema(engine)  # no-op on tables that exist; production runs Alembic first
     sessions = session_factory(engine)
     tenancy.install_session_hook(sessions)
-    adapters = AdapterRegistry(sandbox=cfg.sandbox)
+    simulated = cfg.sandbox or cfg.beta  # the beta's payments and loan offers are simulated too (no /sandbox routes)
+    adapters = AdapterRegistry(sandbox=simulated)
     adapters.register("text", "offline", OfflineParser)
     adapters.register("speech", "offline", OfflineSpeech)
     adapters.register("vision", "offline", OfflineVision)
@@ -256,14 +260,14 @@ def build_services(cfg: Settings, schema: bool = True, http_client=None) -> Serv
     adapters.register("payments", "paytm", lambda: PaytmPayments(cfg.paytm_merchant_key, cfg.paytm_base_url,
                                                                  cfg.paytm_client_id, http_client))
     sandbox = None
-    if cfg.sandbox:
+    if simulated:
         sandbox = Sandbox(SandboxPayments(), SandboxSoundbox(), SandboxSms(), Trace())
         adapters.register("payments", "sandbox", lambda: sandbox.payments, sandbox_only=True)
         adapters.register("soundbox", "sandbox", lambda: sandbox.soundbox, sandbox_only=True)
         adapters.register("sms", "sandbox", lambda: sandbox.sms, sandbox_only=True)
         lending = SandboxLending()
         adapters.register("lending", "sandbox", lambda: lending, sandbox_only=True)
-    trace = sandbox.trace.record if sandbox else (lambda _m, _k, _d: None)
+    trace = sandbox.trace.record if cfg.sandbox else (lambda _m, _k, _d: None)  # the demo's "behind the scenes"
     timers = TimerRunner(sessions)
     bills = BillService(sessions, adapters.get("text", cfg.llm if cfg.llm in adapters.names("text") else "offline"),
                         trace)
@@ -310,7 +314,15 @@ def build_services(cfg: Settings, schema: bool = True, http_client=None) -> Serv
         "voice": Limit(120, 600), "ask": Limit(40, 600), "speak": Limit(40, 600), "photo.upload": Limit(30, 3600),
         "summary.now": Limit(10, 600), "export": Limit(5, 3600),
         "demo.shop": Limit(cfg.demo_shops_per_ip_hour, 3600),
+        # beta sign-up: OTP requests (asked before the phone calls Firebase) and token exchanges
+        "otp.ip": Limit(10, 3600), "otp.number": Limit(5, 3600), "auth.firebase": Limit(10, 600),
     })
+    svc.firebase_verifier, svc.phone_prefixes = None, tuple(p.strip() for p in cfg.phone_prefixes.split(",") if p)
+    svc.phone_hasher = make_hasher(cfg)
+    if cfg.firebase_project_id:
+        svc.firebase_verifier = FirebaseVerifier(cfg.firebase_project_id,
+                                                 JwksKeys(cfg.firebase_jwks_url, http_client, kty="RSA"),
+                                                 svc.phone_prefixes)
     if cfg.sandbox:
         svc.sandbox_partner = SandboxPartner()
         svc.partner_verifier = PartnerVerifier(SandboxPartner.issuer, svc.sandbox_partner.keys)
@@ -592,6 +604,16 @@ def create_app(services: Services | None = None) -> FastAPI:
                                                          None)},
                 "voice": svc.voice.mode, "vision": svc.purchases.mode,
                 "bill_samples": svc.purchases.samples()}
+
+    @app.get("/api/config")
+    def public_config():
+        """What the sign-in screen needs. Firebase's web settings are public identifiers, not secrets."""
+        signin = "sandbox" if cfg.sandbox else ("phone" if svc.firebase_verifier else "partner")
+        out = {"beta": cfg.beta, "signin": signin, "privacy_version": PRIVACY_VERSION}
+        if svc.firebase_verifier is not None:
+            out["firebase"] = {"apiKey": cfg.firebase_api_key, "authDomain": cfg.firebase_auth_domain,
+                               "projectId": cfg.firebase_project_id, "appId": cfg.firebase_app_id}
+        return out
 
     # ---------------- the shop ----------------
 
@@ -1053,6 +1075,21 @@ def create_app(services: Services | None = None) -> FastAPI:
             return {"result": result}
         log.info("partner event of unknown type %r from %s ignored (id %s)", evt.type[:64], evt.source, evt.id[:64])
         return {"result": "ignored"}
+
+    if cfg.beta:
+        @app.post("/v1/beta/qr/{order_id}/pay")
+        def beta_pay(order_id: str, mid: str = Depends(owner)):
+            """Beta: payments are simulated (no money moves). The owner plays their customer paying one of their
+            own QRs in full; another shop's QR is not found."""
+            with svc.sessions() as s:
+                bill_id = order_id.rsplit("-", 1)[0]
+                if s.execute(select(SalesBill.id).where(SalesBill.id == bill_id,
+                                                        SalesBill.merchant_id == mid)).first() is None:
+                    raise HTTPException(404, "No such QR")
+            try:
+                return svc.sandbox.payments.pay(order_id, None)
+            except KeyError:
+                raise HTTPException(404, "No such QR") from None
 
     if cfg.sandbox:  # demo only: absent from the app (not just refused) everywhere else
         app.include_router(sandbox_router(svc, owner))
