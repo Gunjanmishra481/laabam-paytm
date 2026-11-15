@@ -9,7 +9,7 @@
     "synth": "tsc -p . && cdk synth --app \"node dist/bin/app.js\" --quiet"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.275.0",
+    "aws-cdk-lib": "2.276.0",
     "cdk-nag": "3.0.2",
     "constructs": "10.8.1"
   },
