@@ -37,6 +37,11 @@ LAABAM_DATABASE_URL=sqlite:///mig.db alembic revision --autogenerate -m "..."   
 cd frontend && npm install && npm run dev
 npm run lint && npm run build && npm run build:preview
 ```
+Container: `docker build -t laabam .` (hardened; see the Dockerfile header for the run flags). Infra (CDK, no AWS calls):
+`cd infra && npm ci && npm test && npm run synth`. Locks: edit `backend/requirements*.in`, then
+`uv pip compile --universal --python-version 3.12 --generate-hashes requirements.in -o requirements.txt` (same for -dev).
+GitHub settings the owner applies by hand: docs/github-settings.md.
+
 Postgres tests: `docker compose up -d db`; conftest's default URL
 (`postgresql+psycopg://laabam:laabam@localhost:55432/postgres`) then picks it up, and every DB test runs
 on SQLite and Postgres. `LAABAM_REQUIRE_PG=1` fails the run if Postgres is missing (CI sets it).

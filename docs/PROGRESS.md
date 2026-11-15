@@ -37,11 +37,18 @@ e2e job doesn't set it yet; waiting for the owner's decision.
       shop name + sign-in within 10 min, 7-day grace, cancellable, audited); JSON logs with request ids, redaction
       filter, access denials logged, last-resort 500 handler; "What Laabam keeps", Download my data and Delete my shop
       in Settings (en/ta/hi); a bill read by the Gemini fallback says so (C5). ASVS: 141 met, 23 partial, 30 gaps, 65 N/A
-- [ ] S4 pipeline (checkpoint: CI passing with all scans)
-      Started: hash-pinned lockfiles (requirements.in/-dev.in -> uv pip compile --universal --generate-hashes),
-      CI installs with --require-hashes, unused langgraph dropped; pip-audit and npm audit clean (2026-11-15).
-      Still to do: CI scans (pip-audit, npm audit, gitleaks, CodeQL, Trivy, SBOM, Dependabot), hardened Dockerfile
-      (bases pinned by digest; RDS CA bundle by sha256), infra/ CDK OIDC deploy role (not deployed), GitHub settings list
+- [x] S4 pipeline, except what needs GitHub or AWS admin (2026-11-15): hash-pinned locks (uv, --require-hashes);
+      CI jobs backend (ruff, pip-audit, pytest on SQLite+Postgres), frontend (npm audit, lint, builds), secrets
+      (gitleaks over the full history), e2e, image (hardened build, smoke test read-only/no-caps/non-root, Trivy image
+      + Dockerfile config, CycloneDX SBOM artifact), infra (CDK tests + cdk-nag + synth); CodeQL (python, JS/TS,
+      actions) weekly and on push; Dependabot (pip, npm x2, actions, docker); actions pinned by SHA, images by digest.
+      Hardened Dockerfile (bases by digest, RDS CA by sha256, uid 10001, read-only root, prod defaults fail closed,
+      Debian security updates). infra/: the GitHub OIDC deploy role (only this repo's `production` environment; can
+      only assume the CDK bootstrap roles), tested, not deployed. docs/github-settings.md: what the owner changes.
+      ASVS: 145 met, 25 partial, 24 gaps, 65 N/A.
+      Open: CI not yet seen green (needs `gh auth login`); infra `npm audit` not gated (aws-cdk-lib bundles minimatch
+      10.2.6, GHSA-g3hv-75wg-m249, moderate, build-time only, no fixed release yet) pending the owner's decision;
+      CodeQL needs a public repo or GitHub Advanced Security
 - [ ] S5 AWS infrastructure (checkpoint: cost estimate and cdk-nag; no deploy without go-ahead)
 - [ ] S6 prove it (checkpoint: docs/security/REPORT.md)
 
@@ -51,7 +58,7 @@ e2e job doesn't set it yet; waiting for the owner's decision.
 ## Where things stand (2026-11-14)
 
 - [x] Phase 3: bill photos → checked cost lines → owner confirms (Bills in, Check a read bill)
-- [x] Bill photos read by Sarvam Document AI on the worker, Gemini fallback, offline fixtures
+- [x] Bill photos read by Sarvam Document AI on the worker, offline fixtures (Gemini adapter kept, off by default)
 - [x] Phase 4: profit maths, method per line ("about" for estimates); `/v1/profit`, `/v1/profit/items/{id}` with sources
 - [x] Phase 4: alerts (price rise ≥5% or ≥₹2, margin <8%, slow after 14 days, running out) on the worker;
       `/v1/alerts`, `/seen`, `/acted`; scan after each confirmed bill and nightly at 02:00 IST

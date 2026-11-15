@@ -18,7 +18,7 @@ NO_XML = ("N/A", "No XML, SOAP or GraphQL anywhere")
 # status: Met | Partial | Gap | N/A ; note says what exists or which phase closes it
 S = {
     # V1 architecture
-    "V1.1.1": ("Partial", "Phased plan with security gates (SECURITY_PLAN.md); CI security gates S4"),
+    "V1.1.1": ("Met", "Phased plan with security gates (SECURITY_PLAN.md); CI gates: tests, gitleaks, pip-audit, npm audit, CodeQL, Trivy, cdk-nag"),
     "V1.1.2": ("Met", "THREAT_MODEL.md; review on every flow/adapter change"),
     "V1.1.3": ("Partial", "BUILD_PLAN rules (no QR before confirm, no figure from a model) are security constraints; "
                           "per-feature constraints added from S1"),
@@ -26,7 +26,7 @@ S = {
     "V1.1.5": ("Met", "Architecture in SECURITY_PLAN.md and THREAT_MODEL.md"),
     "V1.1.6": ("Partial", "Central owner dependency, security.py, llm guard; RLS and rate limiter central in S1"),
     "V1.1.7": ("Partial", "CLAUDE.md rules + SECURITY_PLAN.md; a secure-coding checklist in docs/security (S6)"),
-    "V1.2.1": ("Partial", "S1: the app connects as laabam_app (no table ownership, no BYPASSRLS, no CREATE); migrations as the owner. S4/S5: non-root container"),
+    "V1.2.1": ("Partial", "App connects as laabam_app (no ownership, no BYPASSRLS); container runs as uid 10001, read-only root, no capabilities. S5: task roles"),
     "V1.2.2": ("Partial", "S3: the app reaches Postgres only with TLS verify-full against the RDS CA (config refuses less in demo/prod). S5: ALB only from CloudFront"),
     "V1.2.3": ("Met", "One mechanism: partner assertion -> device session (ES256 access + rotating refresh); the demo uses the same path"),
     "V1.2.4": ("Met", "Sandbox and partner sign-in share the verifier, AuthService and the owner dependency"),
@@ -47,14 +47,14 @@ S = {
     "V1.8.2": ("Partial", "Retention sweep (12 months), keyed audit digests, export/delete (S3); encryption at rest settings S5"),
     "V1.9.1": ("Partial", "S3: app to RDS verify-full; S5: CloudFront-ALB-ECS TLS"),
     "V1.9.2": ("Met", "RDS: sslmode=verify-full with the RDS CA bundle; partners: https only with verification (httpx default)"),
-    "V1.10.1": ("Met", "Git with descriptive commits; branch protection S4"),
+    "V1.10.1": ("Partial", "Git with descriptive commits; branch ruleset (PRs, required checks, no force push) listed in docs/github-settings.md for the owner to apply"),
     "V1.11.1": ("Met", "Components and their roles in BUILD_PLAN.md and THREAT_MODEL.md"),
     "V1.11.2": ("Partial", "Bills, payments, loans are transactional with row locks; auth flows in S1"),
     "V1.12.2": ("Met", "Photos re-encoded by the worker, served only to their shop as image/jpeg with nosniff"),
     "V1.14.1": ("Gap", "S5: VPC private subnets, SGs, ALB from CloudFront only"),
-    "V1.14.2": ("Gap", "S4: images by digest, OIDC deploy, ECR"),
-    "V1.14.3": ("Gap", "S4: pip-audit, npm audit, Dependabot"),
-    "V1.14.4": ("Gap", "S4/S5: CDK synth + cdk-nag in CI"),
+    "V1.14.2": ("Partial", "Base images and CI images by digest, actions by SHA, packages by hash; OIDC deploy role in CDK (tested, not deployed). S5: ECR, deploy"),
+    "V1.14.3": ("Met", "pip-audit and npm audit in CI on every push; Dependabot for pip, npm, actions and Docker"),
+    "V1.14.4": ("Partial", "CDK synth + cdk-nag (AwsSolutions) in CI for the deploy role; S5 adds the application stacks"),
     "V1.14.5": ("Gap", "S5: Fargate tasks in private subnets, no public IPs"),
     "V1.14.6": ("Met", "React PWA; no Flash/ActiveX/NSAPI"),
     # V3 sessions
@@ -173,7 +173,7 @@ S = {
     "V10.2.1": ("Met", "No phone-home code; outbound calls only to configured partners (allowlist S2)"),
     "V10.2.2": ("Met", "Microphone only while holding the button; camera only through the file input"),
     "V10.3.1": ("Met", "PWA updates come from our own origin over HTTPS (S5)"),
-    "V10.3.2": ("Partial", "Bundled assets, no third-party CDNs; S4 image digests and signed commits"),
+    "V10.3.2": ("Partial", "Bundled assets, no CDNs; images by digest, actions by SHA, locks hashed, downloads checked by sha256; commit signing not yet required"),
     "V10.3.3": ("Gap", "S5: Route 53 records only for live resources; no dangling CloudFront aliases"),
     # V11 business logic
     "V11.1.1": ("Met", "Bill flow is a state machine (draft -> confirmed -> paid); out-of-order calls refused"),
@@ -216,15 +216,15 @@ S = {
     "V13.4.1": NO_XML,
     "V13.4.2": NO_XML,
     # V14 config
-    "V14.1.1": ("Partial", "CI builds and tests; S4 repeatable hardened builds"),
+    "V14.1.1": ("Met", "Repeatable builds: hash-pinned locks, base images by digest, CI builds and smoke-tests the image on every push"),
     "V14.1.2": ("N/A", "No compiled code of ours"),
-    "V14.1.3": ("Gap", "S4/S5: hardened container and server config"),
+    "V14.1.3": ("Partial", "Hardened container: non-root, read-only root fs, no capabilities, no Server/Date headers, prod-safe defaults. S5: CloudFront/ALB config"),
     "V14.1.4": ("Gap", "S5: CDK deploys everything"),
-    "V14.2.1": ("Gap", "S4: dependency audit in CI"),
+    "V14.2.1": ("Met", "pip-audit (both locks) and npm audit (frontend) fail CI on known vulnerabilities; Trivy fails on fixable HIGH/CRITICAL in the image"),
     "V14.2.2": ("Met", "API docs and the OpenAPI map are off outside development; sandbox routes absent in prod"),
     "V14.2.3": ("Met", "Fonts and scripts self-hosted; no external CDNs"),
     "V14.2.4": ("Met", "PyPI and npm only"),
-    "V14.2.5": ("Gap", "S4: SBOM generated in CI"),
+    "V14.2.5": ("Met", "CycloneDX SBOM of the image generated by Trivy in CI and kept as an artifact for 90 days"),
     "V14.2.6": ("Partial", "Adapters wrap partners; image decoding isolated in the worker (S2)"),
     "V14.3.2": ("Met", "No debug mode; docs off outside dev; generic 500s"),
     "V14.3.3": ("Partial", "Server header dropped on API responses; /api/health shows no versions outside dev; CloudFront S5"),
@@ -277,7 +277,7 @@ for r in rows:
 
 if missing:
     sys.exit("no status for: " + ", ".join(missing))
-PHASE = "S3"
+PHASE = "S4"
 head = f"""# OWASP ASVS 4.0.3, Level 2: Laabam checklist
 
 Source: the official ASVS 4.0.3 requirements (github.com/OWASP/ASVS, tag v4.0.3), Level 2 rows only

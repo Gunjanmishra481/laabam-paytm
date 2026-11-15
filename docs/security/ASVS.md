@@ -1,10 +1,10 @@
 # OWASP ASVS 4.0.3, Level 2: Laabam checklist
 
 Source: the official ASVS 4.0.3 requirements (github.com/OWASP/ASVS, tag v4.0.3), Level 2 rows only
-(259 items). Status after phase S3. Each Gap or
+(259 items). Status after phase S4. Each Gap or
 Partial names the phase that closes it; the S6 report updates this table.
 
-**Met** 141 · **Partial** 23 · **Gap** 30 · **N/A** 65
+**Met** 145 · **Partial** 25 · **Gap** 24 · **N/A** 65
 
 Statuses: Met (built, and tested where testable) · Partial (part built; the note says what's left) ·
 Gap (not built; planned in the phase named) · N/A (doesn't apply, with the reason).
@@ -14,14 +14,14 @@ Requirement text is shortened for the table; the CSV has the full wording.
 
 | ID | Requirement | Status | Notes |
 |---|---|---|---|
-| V1.1.1 | Verify the use of a secure software development lifecycle that addresses security in all stages of development. | Partial | Phased plan with security gates (SECURITY_PLAN.md); CI security gates S4 |
+| V1.1.1 | Verify the use of a secure software development lifecycle that addresses security in all stages of development. | Met | Phased plan with security gates (SECURITY_PLAN.md); CI gates: tests, gitleaks, pip-audit, npm audit, CodeQL, Trivy, cdk-nag |
 | V1.1.2 | Verify the use of threat modeling for every design change or sprint planning to identify threats, plan for countermeasures, facilitate appropriate risk responses, and... | Met | THREAT_MODEL.md; review on every flow/adapter change |
 | V1.1.3 | Verify that all user stories and features contain functional security constraints, such as "As a user, I should be able to view and edit my profile. I should not be... | Partial | BUILD_PLAN rules (no QR before confirm, no figure from a model) are security constraints; per-feature constraints added from S1 |
 | V1.1.4 | Verify documentation and justification of all the application's trust boundaries, components, and significant data flows. | Met | Trust boundaries TB1-TB5 in THREAT_MODEL.md §3 |
 | V1.1.5 | Verify definition and security analysis of the application's high-level architecture and all connected remote services. | Met | Architecture in SECURITY_PLAN.md and THREAT_MODEL.md |
 | V1.1.6 | Verify implementation of centralized, simple (economy of design), vetted, secure, and reusable security controls to avoid duplicate, missing, ineffective, or insecure... | Partial | Central owner dependency, security.py, llm guard; RLS and rate limiter central in S1 |
 | V1.1.7 | Verify availability of a secure coding checklist, security requirements, guideline, or policy to all developers and testers. | Partial | CLAUDE.md rules + SECURITY_PLAN.md; a secure-coding checklist in docs/security (S6) |
-| V1.2.1 | Verify the use of unique or special low-privilege operating system accounts for all application components, services, and servers. | Partial | S1: the app connects as laabam_app (no table ownership, no BYPASSRLS, no CREATE); migrations as the owner. S4/S5: non-root container |
+| V1.2.1 | Verify the use of unique or special low-privilege operating system accounts for all application components, services, and servers. | Partial | App connects as laabam_app (no ownership, no BYPASSRLS); container runs as uid 10001, read-only root, no capabilities. S5: task roles |
 | V1.2.2 | Verify that communications between application components, including APIs, middleware and data layers, are authenticated. Components should have the least necessary... | Partial | S3: the app reaches Postgres only with TLS verify-full against the RDS CA (config refuses less in demo/prod). S5: ALB only from CloudFront |
 | V1.2.3 | Verify that the application uses a single vetted authentication mechanism that is known to be secure, can be extended to include strong authentication, and has... | Met | One mechanism: partner assertion -> device session (ES256 access + rotating refresh); the demo uses the same path |
 | V1.2.4 | Verify that all authentication pathways and identity management APIs implement consistent authentication security control strength, such that there are no weaker... | Met | Sandbox and partner sign-in share the verifier, AuthService and the owner dependency |
@@ -42,14 +42,14 @@ Requirement text is shortened for the table; the CSV has the full wording.
 | V1.8.2 | Verify that all protection levels have an associated set of protection requirements, such as encryption requirements, integrity requirements, retention, privacy and... | Partial | Retention sweep (12 months), keyed audit digests, export/delete (S3); encryption at rest settings S5 |
 | V1.9.1 | Verify the application encrypts communications between components, particularly when these components are in different containers, systems, sites, or cloud providers. | Partial | S3: app to RDS verify-full; S5: CloudFront-ALB-ECS TLS |
 | V1.9.2 | Verify that application components verify the authenticity of each side in a communication link to prevent person-in-the-middle attacks. For example, application... | Met | RDS: sslmode=verify-full with the RDS CA bundle; partners: https only with verification (httpx default) |
-| V1.10.1 | Verify that a source code control system is in use, with procedures to ensure that check-ins are accompanied by issues or change tickets. The source code control... | Met | Git with descriptive commits; branch protection S4 |
+| V1.10.1 | Verify that a source code control system is in use, with procedures to ensure that check-ins are accompanied by issues or change tickets. The source code control... | Partial | Git with descriptive commits; branch ruleset (PRs, required checks, no force push) listed in docs/github-settings.md for the owner to apply |
 | V1.11.1 | Verify the definition and documentation of all application components in terms of the business or security functions they provide. | Met | Components and their roles in BUILD_PLAN.md and THREAT_MODEL.md |
 | V1.11.2 | Verify that all high-value business logic flows, including authentication, session management and access control, do not share unsynchronized state. | Partial | Bills, payments, loans are transactional with row locks; auth flows in S1 |
 | V1.12.2 | Verify that user-uploaded files - if required to be displayed or downloaded from the application - are served by either octet stream downloads, or from an unrelated... | Met | Photos re-encoded by the worker, served only to their shop as image/jpeg with nosniff |
 | V1.14.1 | Verify the segregation of components of differing trust levels through well-defined security controls, firewall rules, API gateways, reverse proxies, cloud-based... | Gap | S5: VPC private subnets, SGs, ALB from CloudFront only |
-| V1.14.2 | Verify that binary signatures, trusted connections, and verified endpoints are used to deploy binaries to remote devices. | Gap | S4: images by digest, OIDC deploy, ECR |
-| V1.14.3 | Verify that the build pipeline warns of out-of-date or insecure components and takes appropriate actions. | Gap | S4: pip-audit, npm audit, Dependabot |
-| V1.14.4 | Verify that the build pipeline contains a build step to automatically build and verify the secure deployment of the application, particularly if the application... | Gap | S4/S5: CDK synth + cdk-nag in CI |
+| V1.14.2 | Verify that binary signatures, trusted connections, and verified endpoints are used to deploy binaries to remote devices. | Partial | Base images and CI images by digest, actions by SHA, packages by hash; OIDC deploy role in CDK (tested, not deployed). S5: ECR, deploy |
+| V1.14.3 | Verify that the build pipeline warns of out-of-date or insecure components and takes appropriate actions. | Met | pip-audit and npm audit in CI on every push; Dependabot for pip, npm, actions and Docker |
+| V1.14.4 | Verify that the build pipeline contains a build step to automatically build and verify the secure deployment of the application, particularly if the application... | Partial | CDK synth + cdk-nag (AwsSolutions) in CI for the deploy role; S5 adds the application stacks |
 | V1.14.5 | Verify that application deployments adequately sandbox, containerize and/or isolate at the network level to delay and deter attackers from attacking other... | Gap | S5: Fargate tasks in private subnets, no public IPs |
 | V1.14.6 | Verify the application does not use unsupported, insecure, or deprecated client-side technologies such as NSAPI plugins, Flash, Shockwave, ActiveX, Silverlight, NACL,... | Met | React PWA; no Flash/ActiveX/NSAPI |
 
@@ -257,7 +257,7 @@ Requirement text is shortened for the table; the CSV has the full wording.
 | V10.2.1 | Verify that the application source code and third party libraries do not contain unauthorized phone home or data collection capabilities. Where such functionality... | Met | No phone-home code; outbound calls only to configured partners (allowlist S2) |
 | V10.2.2 | Verify that the application does not ask for unnecessary or excessive permissions to privacy related features or sensors, such as contacts, cameras, microphones, or... | Met | Microphone only while holding the button; camera only through the file input |
 | V10.3.1 | Verify that if the application has a client or server auto-update feature, updates should be obtained over secure channels and digitally signed. The update code must... | Met | PWA updates come from our own origin over HTTPS (S5) |
-| V10.3.2 | Verify that the application employs integrity protections, such as code signing or subresource integrity. The application must not load or execute code from untrusted... | Partial | Bundled assets, no third-party CDNs; S4 image digests and signed commits |
+| V10.3.2 | Verify that the application employs integrity protections, such as code signing or subresource integrity. The application must not load or execute code from untrusted... | Partial | Bundled assets, no CDNs; images by digest, actions by SHA, locks hashed, downloads checked by sha256; commit signing not yet required |
 | V10.3.3 | Verify that the application has protection from subdomain takeovers if the application relies upon DNS entries or DNS subdomains, such as expired domain names, out of... | Gap | S5: Route 53 records only for live resources; no dangling CloudFront aliases |
 
 ## V11 Business Logic
@@ -315,15 +315,15 @@ Requirement text is shortened for the table; the CSV has the full wording.
 
 | ID | Requirement | Status | Notes |
 |---|---|---|---|
-| V14.1.1 | Verify that the application build and deployment processes are performed in a secure and repeatable way, such as CI / CD automation, automated configuration... | Partial | CI builds and tests; S4 repeatable hardened builds |
+| V14.1.1 | Verify that the application build and deployment processes are performed in a secure and repeatable way, such as CI / CD automation, automated configuration... | Met | Repeatable builds: hash-pinned locks, base images by digest, CI builds and smoke-tests the image on every push |
 | V14.1.2 | Verify that compiler flags are configured to enable all available buffer overflow protections and warnings, including stack randomization, data execution prevention,... | N/A | No compiled code of ours |
-| V14.1.3 | Verify that server configuration is hardened as per the recommendations of the application server and frameworks in use. | Gap | S4/S5: hardened container and server config |
+| V14.1.3 | Verify that server configuration is hardened as per the recommendations of the application server and frameworks in use. | Partial | Hardened container: non-root, read-only root fs, no capabilities, no Server/Date headers, prod-safe defaults. S5: CloudFront/ALB config |
 | V14.1.4 | Verify that the application, configuration, and all dependencies can be re-deployed using automated deployment scripts, built from a documented and tested runbook in... | Gap | S5: CDK deploys everything |
-| V14.2.1 | Verify that all components are up to date, preferably using a dependency checker during build or compile time. | Gap | S4: dependency audit in CI |
+| V14.2.1 | Verify that all components are up to date, preferably using a dependency checker during build or compile time. | Met | pip-audit (both locks) and npm audit (frontend) fail CI on known vulnerabilities; Trivy fails on fixable HIGH/CRITICAL in the image |
 | V14.2.2 | Verify that all unneeded features, documentation, sample applications and configurations are removed. | Met | API docs and the OpenAPI map are off outside development; sandbox routes absent in prod |
 | V14.2.3 | Verify that if application assets, such as JavaScript libraries, CSS or web fonts, are hosted externally on a Content Delivery Network (CDN) or external provider,... | Met | Fonts and scripts self-hosted; no external CDNs |
 | V14.2.4 | Verify that third party components come from pre-defined, trusted and continually maintained repositories. | Met | PyPI and npm only |
-| V14.2.5 | Verify that a Software Bill of Materials (SBOM) is maintained of all third party libraries in use. | Gap | S4: SBOM generated in CI |
+| V14.2.5 | Verify that a Software Bill of Materials (SBOM) is maintained of all third party libraries in use. | Met | CycloneDX SBOM of the image generated by Trivy in CI and kept as an artifact for 90 days |
 | V14.2.6 | Verify that the attack surface is reduced by sandboxing or encapsulating third party libraries to expose only the required behaviour into the application. | Partial | Adapters wrap partners; image decoding isolated in the worker (S2) |
 | V14.3.2 | Verify that web or application server and application framework debug modes are disabled in production to eliminate debug features, developer consoles, and unintended... | Met | No debug mode; docs off outside dev; generic 500s |
 | V14.3.3 | Verify that the HTTP headers or any part of the HTTP response do not expose detailed version information of system components. | Partial | Server header dropped on API responses; /api/health shows no versions outside dev; CloudFront S5 |
