@@ -21,14 +21,14 @@ COPY frontend/ ./
 RUN npm run build
 
 # ---- Python dependencies, from the lock only ----
-FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b AS deps
+FROM python:3.15-slim@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928 AS deps
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 COPY backend/requirements.txt /tmp/requirements.txt
 RUN python -m venv /venv \
  && /venv/bin/pip install --require-hashes --only-binary :all: --no-deps -r /tmp/requirements.txt
 
 # ---- runtime ----
-FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+FROM python:3.15-slim@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH=/venv/bin:$PATH \
