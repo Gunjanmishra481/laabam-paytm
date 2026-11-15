@@ -1,0 +1,8 @@
+# Festival calendar for the festival stock plan (BUILD_PLAN §5.5). Add a shop's festivals here; the plan uses the
+# next date of the one chosen (LAABAM_PLAN_FESTIVAL, default deepavali). Dates are the main festival day (IST).
+deepavali:
+  names: {en: Deepavali, ta: தீபாவளி, hi: दिवाली}
+  dates: [2026-11-08, 2027-10-29, 2028-10-17]
+pongal:
+  names: {en: Pongal, ta: பொங்கல், hi: पोंगल}
+  dates: [2027-01-14, 2028-01-15]

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laabam · Loan offer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&amp;family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:#157347}a:hover{color:#0F3D2A}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F6F1; color: #12261B; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 52px 20px 28px; gap: 16px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="Plan.dc.html" aria-label="Back" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; border: 1px solid #DCE6D9; display: grid; place-items: center; color: #12261B; flex: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+<h1 style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 26px; font-weight: 600">Loan offer</h1>
+</div>
+<div style="background: #FFFFFF; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px; border-top: 8px solid #E9B866">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #5B6E60">FROM [LENDING PARTNER]</span>
+<span style="font-family: Fraunces, Georgia, serif; font-size: 48px; font-weight: 700; line-height: 1">₹25,000</span>
+<span style="font-size: 15px; color: #3F5446">For your Deepavali stock. Repaid from your daily UPI collections.</span>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #EEF2EC">
+<div style="display: flex; justify-content: space-between; min-height: 44px; align-items: center; border-bottom: 1px solid #EEF2EC; font-size: 15px"><span style="color: #5B6E60">Interest</span><span style="font-weight: 700">[Partner’s rate]</span></div>
+<div style="display: flex; justify-content: space-between; min-height: 44px; align-items: center; border-bottom: 1px solid #EEF2EC; font-size: 15px"><span style="color: #5B6E60">Repay over</span><span style="font-weight: 700">[__ days]</span></div>
+<div style="display: flex; justify-content: space-between; min-height: 44px; align-items: center; font-size: 15px"><span style="color: #5B6E60">Taken each day</span><span style="font-weight: 700">[₹__ a day]</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #5B6E60">WHY THIS AMOUNT</span>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 4px 14px; display: flex; flex-direction: column">
+<a href="Plan.dc.html" style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; border-bottom: 1px solid #EEF2EC; font-size: 15px; text-decoration: none; color: #12261B"><span>Deepavali order (2× usual)</span><span style="font-weight: 700">₹40,000</span></a>
+<div style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; border-bottom: 1px solid #EEF2EC; font-size: 15px"><span>Your cash in hand</span><span style="font-weight: 700">− ₹15,000</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; font-size: 15px"><span style="font-weight: 700">Shortfall</span><span style="font-weight: 700">₹25,000</span></div>
+</div>
+</div>
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; gap: 12px; align-items: center; background: #DCEBDD; border-radius: 16px; padding: 14px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#157347" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 15px; line-height: 1.4">Sent to the lending partner. You’ll hear back in the app.</span></div>
+</sc-if>
+<p style="margin: auto 0 0; font-size: 13px; line-height: 1.45; color: #5B6E60">The lending partner makes the final decision. Laabam only works out the amount from your plan.</p>
+<sc-if value="{{open}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 10px">
+<a href="Plan.dc.html" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #FFFFFF; border: 1.5px solid #C9D7C6; color: #12261B; font-size: 16px; font-weight: 700; text-decoration: none">Not now</a>
+<button onClick="{{approve}}" style="flex: 2; height: 56px; border-radius: 16px; border: none; background: #157347; color: #FFFFFF; font: 700 17px 'DM Sans', sans-serif">Approve and apply</button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sent: false }; }
+  renderVals() {
+    return { sent: this.state.sent, open: !this.state.sent, approve: () => this.setState({ sent: true }) };
+  }
+}
+</script>
+</body>
+</html>

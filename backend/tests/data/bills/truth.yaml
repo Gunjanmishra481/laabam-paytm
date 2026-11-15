@@ -1,0 +1,42 @@
+# What each photo in this folder actually says (the ground truth for scripts/compare_vision.py).
+# The photos are the sample bills (frontend/public/samples/bills/*.svg) rendered like a phone photo: turned
+# 1.5 degrees, on a table. Unlike bill_samples.yaml (what the offline reader "reads", misreads included), this is
+# what is printed. Money in rupees as printed; qty as printed.
+printed:
+  distributor: Sri Lakshmi Agencies
+  bill_no: SLA/2611
+  bill_date: 2026-11-08
+  total: 4520
+  lines:
+    - {text: SUNFLWR OIL 1LTR POUCH, qty: 10, rate: 148, amount: 1480}
+    - {text: SUGAR LOOSE, qty: 25, rate: 42, amount: 1050}
+    - {text: TOOR DAL 1KG PKT, qty: 5, rate: 128, amount: 640}
+    - {text: PONNI RICE 25KG BAG, qty: 1, rate: 1350, amount: 1350}
+handwritten:
+  distributor: Ganesh Provisions
+  bill_no: "417"
+  bill_date: 2026-11-15
+  total: 4010
+  lines:
+    - {text: Sunflower oil 1L, qty: 10, rate: 156, amount: 1560}
+    - {text: Parle biscuit box, qty: 2, rate: 480, amount: 960}
+    - {text: Atta 10kg, qty: 1, rate: 410, amount: 410}
+    - {text: Milk 500ml pkt, qty: 40, rate: 27, amount: 1080}
+misread:
+  distributor: Sri Lakshmi Agencies
+  bill_no: SLA/2702
+  bill_date: 2026-11-22
+  total: 792
+  lines:
+    - {text: CHANNA DAL 1KG, qty: 4, rate: 96, amount: 384}
+    - {text: HAMAM SOAP 100G, qty: 12, rate: 34, amount: 408}
+tamil:
+  distributor: முருகன் மொத்த வியாபாரம்
+  bill_no: "1182"
+  bill_date: 2026-11-12
+  total: 3268
+  lines:
+    - {text: சன்ஃப்ளவர் எண்ணெய் 1L, qty: 12, rate: 152, amount: 1824}
+    - {text: சர்க்கரை, qty: 10, rate: 44, amount: 440}
+    - {text: துவரம் பருப்பு 1kg, qty: 5, rate: 130, amount: 650}
+    - {text: உளுந்து, qty: 3, rate: 118, amount: 354}

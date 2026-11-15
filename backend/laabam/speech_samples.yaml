@@ -1,0 +1,20 @@
+# Offline speech: what each sample clip "says". Tests send a clip name; the sandbox demo, with no
+# speech service set up, plays these in turn for a voice order so the flow can be shown end to end.
+# Written the way a speech service returns them (punctuation, digits or number words).
+en:
+  - {name: en_order, text: "Rice 200, sugar 100, oil 165."}
+  - {name: en_learned, text: "Rice, oil."}
+  - {name: en_kg, text: "2 kg sugar at 50, toor dal 140."}
+  - {name: en_words, text: "Rice two hundred and fifty, biscuit 30."}
+ta:
+  - {name: ta_order, text: "அரிசி 200, சர்க்கரை 100, எண்ணெய் 165."}
+  - {name: ta_learned, text: "அரிசி, எண்ணெய்."}
+  - {name: ta_words, text: "சர்க்கரை ஒரு கிலோ ஐம்பது, அப்புறம் பருப்பு அரை கிலோ அறுபது."}
+hi:
+  - {name: hi_order, text: "चावल 200, चीनी 100, तेल 165।"}
+  - {name: hi_learned, text: "चावल, तेल।"}
+  - {name: hi_words, text: "आटा ढाई सौ और दाल डेढ़ किलो एक सौ बीस।"}
+fixes:
+  - {name: en_fix, language: en, text: "Sugar 120, not 100."}
+  - {name: ta_fix, language: ta, text: "அரிசி 200 இல்ல 250."}
+  - {name: hi_fix, language: hi, text: "चावल 200 नहीं 250।"}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laabam · Alerts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&amp;family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:#157347}a:hover{color:#0F3D2A}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F6F1; color: #12261B; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 52px 20px 24px; gap: 14px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="Counter.dc.html" aria-label="Back" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; border: 1px solid #DCE6D9; display: grid; place-items: center; color: #12261B; flex: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+<h1 style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 600">Things to look at</h1>
+</div>
+<sc-for list="{{alerts}}" as="a" hint-placeholder-count="4">
+<div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: {{a.tone}}"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{a.tone}}"></span>{{a.kind}}</span>
+<span style="font-size: 17px; font-weight: 700; line-height: 1.3">{{a.title}}</span>
+<span style="font-size: 14px; line-height: 1.45; color: #3F5446">{{a.detail}}</span>
+<div style="display: flex; gap: 8px">
+<a href="{{a.href}}" style="display: flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 12px; background: #157347; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none">{{a.action}}</a>
+<button onClick="{{a.dismiss}}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid #C9D7C6; background: #FFFFFF; color: #12261B; font: 700 15px 'DM Sans', sans-serif">Got it</button>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 40px 0 0; text-align: center; font-size: 16px; color: #5B6E60">All clear. Laabam checks again after every bill.</p></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { gone: {} }; }
+  renderVals() {
+    const all = [
+      { id: 'oil', kind: 'PRICE RISE', tone: '#9A2F1C', title: 'Sunflower oil costs ₹8 more a litre', detail: 'Sri Balaji, 13 Nov: ₹156, up from ₹148. Profit a litre fell from ₹17 to ₹9.', action: 'See details', href: 'ItemDetail.dc.html' },
+      { id: 'bis', kind: 'RUNNING OUT', tone: '#9A4A10', title: 'Biscuits will run out by Thursday', detail: 'You sell about 14 packs a day and have about 40 left.', action: 'Add to reorder', href: 'Plan.dc.html' },
+      { id: 'slow', kind: 'SLOW STOCK', tone: '#1F5F8B', title: 'Health drink 500 g hasn’t sold in 21 days', detail: 'About ₹1,840 is sitting on the shelf. Buy less next time.', action: 'See item', href: 'Profit.dc.html' },
+      { id: 'milk', kind: 'LOW MARGIN', tone: '#4A5B50', title: 'Milk earns 3.7%', detail: 'Fine to keep for footfall. Your other dairy earns more.', action: 'See margins', href: 'Profit.dc.html' }
+    ];
+    const alerts = all.filter((a) => !this.state.gone[a.id]).map((a) => ({ ...a, dismiss: () => this.setState({ gone: { ...this.state.gone, [a.id]: true } }) }));
+    return { alerts, empty: alerts.length === 0 };
+  }
+}
+</script>
+</body>
+</html>

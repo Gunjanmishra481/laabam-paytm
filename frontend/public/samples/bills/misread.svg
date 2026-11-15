@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" font-family="Consolas, 'Courier New', monospace" fill="#1c1c1c">
+  <rect width="600" height="800" fill="#fdfcf7"/>
+  <text x="300" y="70" text-anchor="middle" font-size="30" font-weight="700">SRI LAKSHMI AGENCIES</text>
+  <text x="300" y="98" text-anchor="middle" font-size="15">12, East Masi Street, Madurai 625001</text>
+  <text x="300" y="120" text-anchor="middle" font-size="14">GSTIN 33ABCDE1234F1Z5 · Ph 98400 12345</text>
+  <text x="300" y="150" text-anchor="middle" font-size="18" font-weight="700">TAX INVOICE</text>
+  <text x="40" y="184" font-size="16">Bill No: SLA/2702</text>
+  <text x="560" y="184" text-anchor="end" font-size="16">Date: 22/11/2026</text>
+  <text x="40" y="208" font-size="16">To: Murugan Stores, Madurai</text>
+  <line x1="30" y1="230" x2="570" y2="230" stroke="#222" stroke-width="2"/>
+  <text x="40" y="254" text-anchor="start" font-size="15" font-weight="700">PARTICULARS</text>
+  <text x="360" y="254" text-anchor="end" font-size="15" font-weight="700">QTY</text>
+  <text x="460" y="254" text-anchor="end" font-size="15" font-weight="700">RATE</text>
+  <text x="560" y="254" text-anchor="end" font-size="15" font-weight="700">AMOUNT</text>
+  <line x1="30" y1="266" x2="570" y2="266" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="40" y="300" font-size="16">CHANNA DAL 1KG</text>
+  <text x="360" y="300" text-anchor="end" font-size="16">4 PKT</text>
+  <text x="460" y="300" text-anchor="end" font-size="16">96.00</text>
+  <text x="560" y="300" text-anchor="end" font-size="16">384.00</text>
+  <text x="40" y="334" font-size="16">HAMAM SOAP 100G</text>
+  <text x="360" y="334" text-anchor="end" font-size="16">12 PCS</text>
+  <text x="460" y="334" text-anchor="end" font-size="16">34.00</text>
+  <text x="560" y="334" text-anchor="end" font-size="16">408.00</text>
+  <line x1="30" y1="356" x2="570" y2="356" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="460" y="390" text-anchor="end" font-size="18" font-weight="700">TOTAL</text>
+  <text x="560" y="390" text-anchor="end" font-size="18" font-weight="700">792.00</text>
+  <text x="40" y="420" font-size="14">Rupees Seven Hundred Ninety Two only</text>
+  <text x="560" y="740" text-anchor="end" font-size="14">For SRI LAKSHMI AGENCIES</text>
+  <text x="40" y="740" font-size="13" fill="#555">Goods once sold will not be taken back. E.&amp;O.E.</text>
+</svg>

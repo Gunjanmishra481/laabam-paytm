@@ -1,0 +1,6 @@
+{
+  "head": {"responseTimestamp": "1762680000000", "version": "v1", "clientId": "C11"},
+  "body": {
+    "resultInfo": {"resultStatus": "FAILURE", "resultCode": "QR_1020", "resultMsg": "Invalid posId"}
+  }
+}

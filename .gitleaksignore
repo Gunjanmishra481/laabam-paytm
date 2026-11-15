@@ -1,0 +1,14 @@
+# gitleaks findings that are fake test values, not secrets. Six findings, four fingerprints:
+# gitleaks reports lines 16 and 22 of test_logs.py twice each (the same value matched twice).
+# Add a line here only for a value that is provably fake, with a comment saying why.
+# (The values aren't repeated here, or this file would match too.)
+
+# Fake test value: a made-up Stripe-style live key that the log-redaction test checks gets masked (2 findings)
+backend/tests/test_logs.py:stripe-access-token:16
+# Fake test value: a made-up AWS access key id (the letters A to P) that the redaction test checks gets masked (2 findings)
+backend/tests/test_logs.py:aws-access-token:22
+# Fake test value: a made-up API key inside a log line that the redaction test checks gets masked (1 finding)
+backend/tests/test_logs.py:generic-api-key:36
+# Fake test value: the sample merchant key from Paytm's public checksum examples, used with the test vectors in
+# tests/data/paytm; not a key for any real merchant account (1 finding)
+backend/tests/test_payments.py:generic-api-key:21

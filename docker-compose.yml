@@ -1,0 +1,22 @@
+# Local Postgres for development and the Postgres half of the test suite.
+#   docker compose up -d db
+#   export LAABAM_TEST_PG=postgresql+psycopg://laabam:laabam@localhost:55432/postgres
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: laabam
+      POSTGRES_PASSWORD: laabam
+      POSTGRES_DB: laabam
+    ports:
+      - "55432:5432"
+    volumes:
+      - laabam-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laabam"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  laabam-pg:

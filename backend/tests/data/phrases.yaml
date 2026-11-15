@@ -1,0 +1,221 @@
+# Counter phrases and the lines the parser must produce.
+# price: rupees as heard; kind: total (default when a price is given) | per_unit; qty: in unit (kg, L, pc, pack).
+# Tamil and Hindi entries: native-speaker review welcome; add phrases as the pilot hears them.
+
+# ---------------- English: plain prices ----------------
+- text: "rice 200, sugar 100, oil 165"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: sugar, price: "100"}
+    - {item: oil, price: "165"}
+- text: "rice 200 sugar 100 oil 165"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: sugar, price: "100"}
+    - {item: oil, price: "165"}
+- text: "toor dal 140 and basmati rice 320"
+  lang: en
+  lines:
+    - {item: toor dal, price: "140"}
+    - {item: basmati rice, price: "320"}
+- text: "oil 165 rupees, ₹30 bread"
+  lang: en
+  lines:
+    - {item: oil, price: "165"}
+    - {item: bread, price: "30"}
+- text: "um rice 200 uh then sugar 100 okay"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: sugar, price: "100"}
+- text: "rice, 200, sugar, 100"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: sugar, price: "100"}
+
+# ---------------- English: quantities ----------------
+- text: "rice 2 kg 120"
+  lang: en
+  lines:
+    - {item: rice, qty: "2", unit: kg, price: "120"}
+- text: "3 biscuit 30"
+  lang: en
+  lines:
+    - {item: biscuit, qty: "3", unit: pc, price: "30"}
+- text: "biscuit 3 30"
+  lang: en
+  lines:
+    - {item: biscuit, qty: "3", unit: pc, price: "30"}
+- text: "2 kg rice at 60"
+  lang: en
+  lines:
+    - {item: rice, qty: "2", unit: kg, price: "60", kind: per_unit}
+- text: "sugar 60 per kg 2 kg"
+  lang: en
+  lines:
+    - {item: sugar, qty: "2", unit: kg, price: "60", kind: per_unit}
+- text: "half kg dal 60 and 250 g tea 90"
+  lang: en
+  lines:
+    - {item: dal, qty: "0.5", unit: kg, price: "60"}
+    - {item: tea, qty: "0.25", unit: kg, price: "90"}
+- text: "milk 2 packets 54"
+  lang: en
+  lines:
+    - {item: milk, qty: "2", unit: pack, price: "54"}
+- text: "egg 1 dozen 84"
+  lang: en
+  lines:
+    - {item: egg, qty: "12", unit: pc, price: "84"}
+- text: "biscuit 10 each 3"
+  lang: en
+  lines:
+    - {item: biscuit, qty: "3", unit: pc, price: "10", kind: per_unit}
+- text: "oil 1 litre 165, 500 ml curd 40"
+  lang: en
+  lines:
+    - {item: oil, qty: "1", unit: L, price: "165"}
+    - {item: curd, qty: "0.5", unit: L, price: "40"}
+- text: "rice 200 2 kg sugar 90"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: sugar, qty: "2", unit: kg, price: "90"}
+
+# ---------------- English: no price (learned later) ----------------
+- text: "rice, oil"
+  lang: en
+  lines:
+    - {item: rice}
+    - {item: oil}
+- text: "sugar 1 kg"
+  lang: en
+  lines:
+    - {item: sugar, qty: "1", unit: kg}
+
+# ---------------- English: corrections, repeats, paise, words ----------------
+- text: "rice 200, no, 250"
+  lang: en
+  lines:
+    - {item: rice, price: "250"}
+- text: "rice 200 sorry 250 sugar 100"
+  lang: en
+  lines:
+    - {item: rice, price: "250"}
+    - {item: sugar, price: "100"}
+- text: "sugar 120 not 100"
+  lang: en
+  lines:
+    - {item: sugar, price: "120"}
+- text: "rice 200, rice 100"
+  lang: en
+  lines:
+    - {item: rice, price: "200"}
+    - {item: rice, price: "100"}
+- text: "shampoo 12.50"
+  lang: en
+  lines:
+    - {item: shampoo, price: "12.50"}
+- text: "soap 12 rupees 50 paise"
+  lang: en
+  lines:
+    - {item: soap, price: "12.50"}
+- text: "rice two hundred and fifty, sugar one hundred"
+  lang: en
+  lines:
+    - {item: rice, price: "250"}
+    - {item: sugar, price: "100"}
+- text: "dal one and a half kg one hundred twenty"
+  lang: en
+  lines:
+    - {item: dal, qty: "1.5", unit: kg, price: "120"}
+- text: "rice 1,200"
+  lang: en
+  lines:
+    - {item: rice, price: "1200"}
+- text: "200"
+  lang: en
+  lines:
+    - {price: "200", flags: [item_needed]}
+
+# ---------------- Hindi ----------------
+- text: "चावल 200, चीनी 100"
+  lang: hi
+  lines:
+    - {item: चावल, price: "200"}
+    - {item: चीनी, price: "100"}
+- text: "चीनी दो किलो अस्सी"
+  lang: hi
+  lines:
+    - {item: चीनी, qty: "2", unit: kg, price: "80"}
+- text: "तेल एक सौ पैंसठ"
+  lang: hi
+  lines:
+    - {item: तेल, price: "165"}
+- text: "आटा ढाई सौ और दाल डेढ़ किलो एक सौ बीस"
+  lang: hi
+  lines:
+    - {item: आटा, price: "250"}
+    - {item: दाल, qty: "1.5", unit: kg, price: "120"}
+- text: "चावल 200 नहीं 250"
+  lang: hi
+  lines:
+    - {item: चावल, price: "250"}
+- text: "चीनी 40 रुपये किलो 2 किलो"
+  lang: hi
+  lines:
+    - {item: चीनी, qty: "2", unit: kg, price: "40", kind: per_unit}
+- text: "chawal do sau pachas, doodh 30 rupaye"
+  lang: hi
+  lines:
+    - {item: chawal, price: "250"}
+    - {item: doodh, price: "30"}
+- text: "बिस्कुट साढ़े तीन सौ"
+  lang: hi
+  lines:
+    - {item: बिस्कुट, price: "350"}
+- text: "चावल २०० चीनी १००"
+  lang: hi
+  lines:
+    - {item: चावल, price: "200"}
+    - {item: चीनी, price: "100"}
+
+# ---------------- Tamil ----------------
+- text: "அரிசி 200, சர்க்கரை 100"
+  lang: ta
+  lines:
+    - {item: அரிசி, price: "200"}
+    - {item: சர்க்கரை, price: "100"}
+- text: "அரிசி இருநூற்று ஐம்பது"
+  lang: ta
+  lines:
+    - {item: அரிசி, price: "250"}
+- text: "எண்ணெய் நூற்றி அறுபத்தி ஐந்து"
+  lang: ta
+  lines:
+    - {item: எண்ணெய், price: "165"}
+- text: "சர்க்கரை ஒரு கிலோ ஐம்பது அப்புறம் பருப்பு அரை கிலோ அறுபது"
+  lang: ta
+  lines:
+    - {item: சர்க்கரை, qty: "1", unit: kg, price: "50"}
+    - {item: பருப்பு, qty: "0.5", unit: kg, price: "60"}
+- text: "அரிசி 200 இல்ல 250"
+  lang: ta
+  lines:
+    - {item: அரிசி, price: "250"}
+- text: "அரிசி 200 ரூபாய்க்கு"
+  lang: ta
+  lines:
+    - {item: அரிசி, price: "200"}
+- text: "பால் ரெண்டு பாக்கெட் ஐம்பத்தி நாலு"
+  lang: ta
+  lines:
+    - {item: பால், qty: "2", unit: pack, price: "54"}
+- text: "rice 200, சர்க்கரை 100"
+  lang: ta
+  lines:
+    - {item: rice, price: "200"}
+    - {item: சர்க்கரை, price: "100"}

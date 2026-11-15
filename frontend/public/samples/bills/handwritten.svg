@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" font-family="'Segoe Print', 'Comic Sans MS', 'Bradley Hand', cursive">
+  <rect width="600" height="800" fill="#fbf6e4"/>
+  <line x1="20" y1="120" x2="580" y2="120" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="156" x2="580" y2="156" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="192" x2="580" y2="192" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="228" x2="580" y2="228" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="264" x2="580" y2="264" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="300" x2="580" y2="300" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="336" x2="580" y2="336" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="372" x2="580" y2="372" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="408" x2="580" y2="408" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="444" x2="580" y2="444" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="480" x2="580" y2="480" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="516" x2="580" y2="516" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="552" x2="580" y2="552" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="588" x2="580" y2="588" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="624" x2="580" y2="624" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="660" x2="580" y2="660" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="696" x2="580" y2="696" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="20" y1="732" x2="580" y2="732" stroke="#a9c4e0" stroke-width="1"/>
+  <line x1="70" y1="0" x2="70" y2="800" stroke="#e5a0a0" stroke-width="1.5"/>
+  <g transform="rotate(-1.2 300 400)">
+    <text x="300" y="70" font-size="32" text-anchor="middle" fill="#1d2f73">Ganesh Provisions</text>
+    <text x="90" y="112" font-size="22" text-anchor="start" fill="#1d2f73">No. 417</text>
+    <text x="560" y="112" font-size="22" text-anchor="end" fill="#1d2f73">15-11-26</text>
+    <text x="90" y="150" font-size="22" text-anchor="start" fill="#1d2f73">To: Murugan Stores</text>
+    <text x="90" y="220" font-size="24" text-anchor="start" fill="#1d2f73">Sunflower oil 1L</text>
+    <text x="455" y="220" font-size="24" text-anchor="end" fill="#1d2f73">10 x 156</text>
+    <text x="560" y="220" font-size="24" text-anchor="end" fill="#1d2f73">1560</text>
+    <text x="90" y="292" font-size="24" text-anchor="start" fill="#1d2f73">Parle biscuit box</text>
+    <text x="455" y="292" font-size="24" text-anchor="end" fill="#1d2f73">2 x 480</text>
+    <text x="560" y="292" font-size="24" text-anchor="end" fill="#1d2f73">960</text>
+    <text x="90" y="364" font-size="24" text-anchor="start" fill="#1d2f73">Atta 10kg</text>
+    <text x="455" y="364" font-size="24" text-anchor="end" fill="#1d2f73">1 x 410</text>
+    <text x="560" y="364" font-size="24" text-anchor="end" fill="#1d2f73">410</text>
+    <text x="90" y="436" font-size="24" text-anchor="start" fill="#1d2f73">Milk 500ml pkt</text>
+    <text x="455" y="436" font-size="24" text-anchor="end" fill="#1d2f73">40 x 27</text>
+    <text x="560" y="436" font-size="24" text-anchor="end" fill="#1d2f73">1080</text>
+    <text x="400" y="544" font-size="28" text-anchor="end" fill="#1d2f73">Total</text>
+    <text x="560" y="544" font-size="28" text-anchor="end" fill="#1d2f73">4010</text>
+    <text x="560" y="690" font-size="20" text-anchor="end" fill="#1d2f73">Recd. with thanks</text>
+    <line x1="420" y1="506" x2="570" y2="506" stroke="#1d2f73" stroke-width="2"/>
+    <path d="M410 560 q80 10 160 -2" stroke="#1d2f73" stroke-width="2" fill="none"/>
+  </g>
+</svg>

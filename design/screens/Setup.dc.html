@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laabam · Shop setup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&amp;family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}a{color:#157347}a:hover{color:#0F3D2A}</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F6F1; color: #12261B; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 24px 32px; gap: 24px; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Main.dc.html" aria-label="Back" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; border: 1px solid #DCE6D9; display: grid; place-items: center; color: #12261B"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+<span style="font-size: 14px; color: #5B6E60">Step 2 of 2</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 600; line-height: 1.15">Your shop</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5B6E60">Three things, and you’re ready to bill. No product list needed.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 18px">
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 15px; font-weight: 700">Shop name</span><input type="text" value="[Your shop name]" style="height: 54px; padding: 0 16px; border-radius: 14px; border: 1.5px solid #C9D7C6; background: #FFFFFF; font: 500 17px 'DM Sans', sans-serif; color: #12261B"></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 15px; font-weight: 700">UPI ID for payments</span><input type="text" value="[shopname@paytm]" style="height: 54px; padding: 0 16px; border-radius: 14px; border: 1.5px solid #C9D7C6; background: #FFFFFF; font: 500 17px 'DM Sans', sans-serif; color: #12261B"><span style="font-size: 13px; color: #5B6E60">Every bill’s QR pays into this ID.</span></label>
+<label style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 15px; font-weight: 700">When do you close?</span><select style="height: 54px; padding: 0 16px; border-radius: 14px; border: 1.5px solid #C9D7C6; background: #FFFFFF; font: 500 17px 'DM Sans', sans-serif; color: #12261B"><option>9:00 pm</option><option>9:30 pm</option><option>10:00 pm</option></select><span style="font-size: 13px; color: #5B6E60">Your day’s summary plays at this time.</span></label>
+</div>
+<div style="display: flex; gap: 14px; align-items: flex-start; background: #E3ECE0; border-radius: 16px; padding: 16px">
+<svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="#157347" stroke-width="2"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="#157347" stroke-width="2" stroke-linecap="round"></path></svg>
+<p style="margin: 0; font-size: 15px; line-height: 1.5">Laabam listens only while you hold the <b>Bill</b> button. Recordings are not saved.</p>
+</div>
+<a href="Counter.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #157347; color: #FFFFFF; font-size: 18px; font-weight: 700; text-decoration: none">Start billing</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

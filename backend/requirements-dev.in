@@ -1,0 +1,7 @@
+# Tests, lint and audit on top of the runtime lock. Lock with:
+#   uv pip compile --universal --python-version 3.12 --generate-hashes requirements-dev.in -o requirements-dev.txt
+-r requirements.in
+-c requirements.txt
+pytest>=8.0
+ruff>=0.6
+pip-audit>=2.7

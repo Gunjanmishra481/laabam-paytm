@@ -1,0 +1,9 @@
+{
+  "head": {"responseTimestamp": "1762680000000", "version": "v1", "clientId": "C11", "signature": "recorded"},
+  "body": {
+    "resultInfo": {"resultStatus": "SUCCESS", "resultCode": "QR_0001", "resultMsg": "SUCCESS"},
+    "qrCodeId": "281005040101ZXQ7NBYKQ6F0",
+    "qrData": "upi://pay?pa=paytmqr281005050101zxq7nbykq6f0@paytm&pn=Paytm%20Merchant&tr=bill_0001-1&am=465.00&cu=INR&mc=5411",
+    "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+  }
+}

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" font-family="Consolas, 'Courier New', monospace" fill="#1c1c1c">
+  <rect width="600" height="800" fill="#fdfcf7"/>
+  <text x="300" y="70" text-anchor="middle" font-size="30" font-weight="700">SRI LAKSHMI AGENCIES</text>
+  <text x="300" y="98" text-anchor="middle" font-size="15">12, East Masi Street, Madurai 625001</text>
+  <text x="300" y="120" text-anchor="middle" font-size="14">GSTIN 33ABCDE1234F1Z5 · Ph 98400 12345</text>
+  <text x="300" y="150" text-anchor="middle" font-size="18" font-weight="700">TAX INVOICE</text>
+  <text x="40" y="184" font-size="16">Bill No: SLA/2611</text>
+  <text x="560" y="184" text-anchor="end" font-size="16">Date: 08/11/2026</text>
+  <text x="40" y="208" font-size="16">To: Murugan Stores, Madurai</text>
+  <line x1="30" y1="230" x2="570" y2="230" stroke="#222" stroke-width="2"/>
+  <text x="40" y="254" text-anchor="start" font-size="15" font-weight="700">PARTICULARS</text>
+  <text x="360" y="254" text-anchor="end" font-size="15" font-weight="700">QTY</text>
+  <text x="460" y="254" text-anchor="end" font-size="15" font-weight="700">RATE</text>
+  <text x="560" y="254" text-anchor="end" font-size="15" font-weight="700">AMOUNT</text>
+  <line x1="30" y1="266" x2="570" y2="266" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="40" y="300" font-size="16">SUNFLWR OIL 1LTR POUCH</text>
+  <text x="360" y="300" text-anchor="end" font-size="16">10 PCS</text>
+  <text x="460" y="300" text-anchor="end" font-size="16">148.00</text>
+  <text x="560" y="300" text-anchor="end" font-size="16">1,480.00</text>
+  <text x="40" y="334" font-size="16">SUGAR LOOSE</text>
+  <text x="360" y="334" text-anchor="end" font-size="16">25 KG</text>
+  <text x="460" y="334" text-anchor="end" font-size="16">42.00</text>
+  <text x="560" y="334" text-anchor="end" font-size="16">1,050.00</text>
+  <text x="40" y="368" font-size="16">TOOR DAL 1KG PKT</text>
+  <text x="360" y="368" text-anchor="end" font-size="16">5 PKT</text>
+  <text x="460" y="368" text-anchor="end" font-size="16">128.00</text>
+  <text x="560" y="368" text-anchor="end" font-size="16">640.00</text>
+  <text x="40" y="402" font-size="16">PONNI RICE 25KG BAG</text>
+  <text x="360" y="402" text-anchor="end" font-size="16">1 BAG</text>
+  <text x="460" y="402" text-anchor="end" font-size="16">1,350.00</text>
+  <text x="560" y="402" text-anchor="end" font-size="16">1,350.00</text>
+  <line x1="30" y1="424" x2="570" y2="424" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="460" y="458" text-anchor="end" font-size="18" font-weight="700">TOTAL</text>
+  <text x="560" y="458" text-anchor="end" font-size="18" font-weight="700">4,520.00</text>
+  <text x="40" y="488" font-size="14">Rupees Four Thousand Five Hundred Twenty only</text>
+  <text x="560" y="740" text-anchor="end" font-size="14">For SRI LAKSHMI AGENCIES</text>
+  <text x="40" y="740" font-size="13" fill="#555">Goods once sold will not be taken back. E.&amp;O.E.</text>
+</svg>

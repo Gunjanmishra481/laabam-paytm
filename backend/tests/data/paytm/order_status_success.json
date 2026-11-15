@@ -1,0 +1,15 @@
+{
+  "head": {"responseTimestamp": "1762680100000", "version": "v1", "signature": "recorded"},
+  "body": {
+    "resultInfo": {"resultStatus": "TXN_SUCCESS", "resultCode": "01", "resultMsg": "Txn Success"},
+    "txnId": "20261109011650000123456789",
+    "bankTxnId": "631234567890",
+    "orderId": "ORDER_ID",
+    "txnAmount": "465.00",
+    "txnType": "SALE",
+    "gatewayName": "PPBLC",
+    "mid": "LAABAM12345678901234",
+    "paymentMode": "UPI",
+    "txnDate": "2026-11-09 14:03:22.0"
+  }
+}

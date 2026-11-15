@@ -1,0 +1,8 @@
+{
+  "head": {"responseTimestamp": "1762680100000", "version": "v1"},
+  "body": {
+    "resultInfo": {"resultStatus": "PENDING", "resultCode": "402", "resultMsg": "Looks like the payment is not complete."},
+    "orderId": "ORDER_ID",
+    "txnAmount": "465.00"
+  }
+}

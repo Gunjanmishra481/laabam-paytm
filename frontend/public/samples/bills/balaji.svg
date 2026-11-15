@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" font-family="Consolas, 'Courier New', monospace" fill="#1c1c1c">
+  <rect width="600" height="800" fill="#fdfcf7"/>
+  <text x="300" y="70" text-anchor="middle" font-size="30" font-weight="700">SRI BALAJI AGENCIES</text>
+  <text x="300" y="98" text-anchor="middle" font-size="15">Wholesale grocers · Sample bill for the Laabam demo</text>
+  <text x="300" y="120" text-anchor="middle" font-size="14">Not a real business</text>
+  <text x="300" y="150" text-anchor="middle" font-size="18" font-weight="700">TAX INVOICE</text>
+  <text x="40" y="184" font-size="16">Bill No: 4471</text>
+  <text x="560" y="184" text-anchor="end" font-size="16">Date: {{DATE}}</text>
+  <text x="40" y="208" font-size="16">To: Demo Kirana</text>
+  <line x1="30" y1="230" x2="570" y2="230" stroke="#222" stroke-width="2"/>
+  <text x="40" y="254" text-anchor="start" font-size="15" font-weight="700">PARTICULARS</text>
+  <text x="360" y="254" text-anchor="end" font-size="15" font-weight="700">QTY</text>
+  <text x="460" y="254" text-anchor="end" font-size="15" font-weight="700">RATE</text>
+  <text x="560" y="254" text-anchor="end" font-size="15" font-weight="700">AMOUNT</text>
+  <line x1="30" y1="266" x2="570" y2="266" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="40" y="300" font-size="16">TEA DUST 250G</text>
+  <text x="360" y="300" text-anchor="end" font-size="16">20 PCS</text>
+  <text x="460" y="300" text-anchor="end" font-size="16">122.00</text>
+  <text x="560" y="300" text-anchor="end" font-size="16">2,440.00</text>
+  <text x="40" y="334" font-size="16">HAMAM SOAP 100G</text>
+  <text x="360" y="334" text-anchor="end" font-size="16">48 PCS</text>
+  <text x="460" y="334" text-anchor="end" font-size="16">34.00</text>
+  <text x="560" y="334" text-anchor="end" font-size="16">1,632.00</text>
+  <text x="40" y="368" font-size="16">GHEE 200ML</text>
+  <text x="360" y="368" text-anchor="end" font-size="16">24 PCS</text>
+  <text x="460" y="368" text-anchor="end" font-size="16">132.00</text>
+  <text x="560" y="368" text-anchor="end" font-size="16">3,168.00</text>
+  <text x="40" y="402" font-size="16">SUNFLWR OIL 1LTR POUCH</text>
+  <text x="360" y="402" text-anchor="end" font-size="16">72 PCS</text>
+  <text x="460" y="402" text-anchor="end" font-size="16">156.00</text>
+  <text x="560" y="402" text-anchor="end" font-size="16">11,232.00</text>
+  <line x1="30" y1="424" x2="570" y2="424" stroke="#222" stroke-dasharray="4 3"/>
+  <text x="460" y="458" text-anchor="end" font-size="18" font-weight="700">TOTAL</text>
+  <text x="560" y="458" text-anchor="end" font-size="18" font-weight="700">18,472.00</text>
+  <text x="40" y="488" font-size="14">Rupees Eighteen Thousand Four Hundred Seventy Two only</text>
+  <text x="560" y="740" text-anchor="end" font-size="14">For SRI BALAJI AGENCIES</text>
+  <text x="40" y="740" font-size="13" fill="#555">Goods once sold will not be taken back. E.&amp;O.E.</text>
+</svg>

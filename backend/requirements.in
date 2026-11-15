@@ -1,0 +1,17 @@
+# Runtime dependencies (top level). Lock with (Python 3.12, every platform, sha256 hashes):
+#   uv pip compile --universal --python-version 3.12 --generate-hashes requirements.in -o requirements.txt
+fastapi>=0.115
+uvicorn>=0.30
+httptools>=0.6
+uvloop>=0.21; sys_platform != "win32"
+pydantic>=2.7
+httpx>=0.27
+sqlalchemy>=2.0
+alembic>=1.13
+psycopg[binary]>=3.1
+pyjwt>=2.8
+pyyaml>=6.0
+cryptography>=42
+pillow>=10.4
+pillow-heif>=0.18
+boto3>=1.35

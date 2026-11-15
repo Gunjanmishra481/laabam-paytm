@@ -1,0 +1,56 @@
+# Offline vision: what each sample distributor bill "reads" as. Tests send a sample name; the sandbox
+# demo, with no vision service set up, offers these. Numbers are strings, copied as printed.
+# The pictures for the demo are in frontend/public/samples/bills/<name>.svg.
+printed:
+  distributor: Sri Lakshmi Agencies
+  bill_no: SLA/2611
+  bill_date: 08/11/2026
+  total: "4,520.00"
+  lines:
+    - {raw_text: SUNFLWR OIL 1LTR POUCH, qty: "10", unit: PCS, rate: "148.00", amount: "1,480.00"}
+    - {raw_text: SUGAR LOOSE, qty: "25", unit: KG, rate: "42.00", amount: "1,050.00"}
+    - {raw_text: TOOR DAL 1KG PKT, qty: "5", unit: PKT, rate: "128.00", amount: "640.00"}
+    - {raw_text: PONNI RICE 25KG BAG, qty: "1", unit: BAG, rate: "1,350.00", amount: "1,350.00"}
+handwritten:
+  distributor: Ganesh Provisions
+  bill_no: "417"
+  bill_date: 15-11-26
+  total: "4010"
+  lines:
+    - {raw_text: Sunflower oil 1L, qty: "10", unit: pc, rate: "156", amount: "1560"}
+    - {raw_text: Parle biscuit box, qty: "2", unit: box, rate: "480", amount: "960"}
+    - {raw_text: Atta 10kg, qty: "1", unit: bag, rate: "410", amount: "410"}
+    - {raw_text: Milk 500ml, qty: "40", unit: pkt, rate: "27", amount: "1080"}
+# The photo says ₹384 for channa dal; the reader got ₹484. The line check (4 x ₹96) catches it.
+misread:
+  distributor: Sri Lakshmi Agencies
+  bill_no: SLA/2702
+  bill_date: 22/11/2026
+  total: "792.00"
+  lines:
+    - {raw_text: CHANNA DAL 1KG, qty: "4", unit: PKT, rate: "96.00", amount: "484.00"}
+    - {raw_text: HAMAM SOAP 100G, qty: "12", unit: PCS, rate: "34.00", amount: "408.00"}
+# A regional-language bill: Tamil item names and units, English digits (how most Tamil Nadu bills are printed).
+tamil:
+  distributor: முருகன் மொத்த வியாபாரம்
+  bill_no: "1182"
+  bill_date: 12.11.2026
+  total: "3,268.00"
+  lines:
+    - {raw_text: சன்ஃப்ளவர் எண்ணெய் 1L, qty: "12", unit: பாக்., rate: "152.00", amount: "1,824.00"}
+    - {raw_text: சர்க்கரை, qty: "10", unit: கிலோ, rate: "44.00", amount: "440.00"}
+    - {raw_text: துவரம் பருப்பு 1kg, qty: "5", unit: பாக்., rate: "130.00", amount: "650.00"}
+    - {raw_text: உளுந்து, qty: "3", unit: கிலோ, rate: "118.00", amount: "354.00"}
+# The Demo Kirana's oil story: Sri Balaji's next bill, oil up ₹8 a litre since bill 4302. Dated six days ago, as if
+# photographed late, so the whole week's oil sales are costed at ₹156. "@today-6" is filled in when it is read; the
+# picture is served with the same date (app.py, /samples/bills/balaji.svg).
+balaji:
+  distributor: Sri Balaji Agencies
+  bill_no: "4471"
+  bill_date: "@today-6"
+  total: "18,472.00"
+  lines:
+    - {raw_text: TEA DUST 250G, qty: "20", unit: PCS, rate: "122.00", amount: "2,440.00"}
+    - {raw_text: HAMAM SOAP 100G, qty: "48", unit: PCS, rate: "34.00", amount: "1,632.00"}
+    - {raw_text: GHEE 200ML, qty: "24", unit: PCS, rate: "132.00", amount: "3,168.00"}
+    - {raw_text: SUNFLWR OIL 1LTR POUCH, qty: "72", unit: PCS, rate: "156.00", amount: "11,232.00"}

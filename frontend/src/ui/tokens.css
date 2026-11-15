@@ -1,0 +1,61 @@
+/* Design tokens (design/DESIGN.md §1). Components use these; never a raw colour. */
+@import '@fontsource-variable/fraunces/opsz.css';
+@import '@fontsource-variable/dm-sans/opsz.css';
+
+:root {
+  /* colour */
+  --green-900: #0F3D2A;   /* deep green: dark screens, summary cards */
+  --green-800: #164D35;   /* cards on deep green */
+  --green-700: #157347;   /* primary buttons, Paid screen, active tab */
+  --green-line: #2E5A45;  /* borders on deep green */
+  --saffron: #E9B866;     /* profit figures, accents and buttons on dark screens */
+  --bg: #F4F6F1;          /* light screen background */
+  --surface: #FFFFFF;     /* cards, inputs */
+  --mint: #E3ECE0;        /* info panels, segmented control track */
+  --mint-2: #DCEBDD;      /* soft tint, Hold-button halo */
+  --ink: #12261B;         /* main text */
+  --muted: #5B6E60;       /* labels, secondary text (passes 4.5:1 on --bg) */
+  --on-dark-muted: #BFD3C5;
+  --line: #DCE6D9;        /* card and input borders */
+  --line-soft: #EEF2EC;   /* row dividers */
+  --input-border: #C9D7C6;
+  --amber-bg: #FDF0DB;    /* needs attention */
+  --amber-line: #F2C894;
+  --amber-text: #9A4A10;
+  --danger: #9A2F1C;      /* price rises, remove, cancel */
+  --disabled-bg: #C9D7C6; --disabled-text: #4A5B50;
+
+  /* a few shades the screens use alongside the palette */
+  --on-dark: #F1F5EE;          /* text on deep green */
+  --on-dark-chip: #1E5A3D;     /* transcript chips on deep green */
+  --on-dark-faint: #6E9C84;    /* trailing ellipsis while listening */
+  --on-green-muted: #D5ECDD;   /* small text on the Paid green */
+  --struck: #8A9A8F;           /* an unticked line */
+  --rec: #F28B5B;              /* the recording dot */
+  --stepper: #F1F5EE;          /* stepper buttons, waiting pill */
+  --scrim: rgba(15, 61, 42, 0.45);
+  --shadow-hold: 0 18px 40px -12px rgba(15, 61, 42, 0.55);
+  --shadow-qr: 0 20px 48px -24px rgba(18, 38, 27, 0.35);
+  --shadow-seg: 0 1px 3px rgba(18, 38, 27, 0.12);
+  --focus: #E9B866;
+  --dash: #9DBBA6;              /* the dashed camera card on Bills in */
+  --muted-2: #3F5446;           /* small print on a white card (Settings) */
+  --knob-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --slow: #1F5F8B;              /* the slow-stock alert */
+  --bar: #2E7A55;               /* profit bars on deep green (the latest one is saffron) */
+
+  /* the simulated Soundbox device (demo only) */
+  --device: #20262A; --device-panel: #2C3337; --device-dot: #3A4248; --device-text: #E9EDEA; --device-bg: #EEF1EC;
+
+  /* type */
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;   /* titles and money */
+  --font-body: 'DM Sans Variable', 'DM Sans', system-ui, sans-serif;
+
+  /* radius */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 22px; --r-sheet: 28px;
+
+  /* spacing scale (px) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px;
+
+  --tabbar-h: 88px;
+}
